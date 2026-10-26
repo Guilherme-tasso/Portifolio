@@ -1,0 +1,700 @@
+/* ---------- Tokens ---------- */
+:root {
+    --fundo: #ecebe6;
+    --fundo-2: #dfded7;
+    --fundo-3: #d3d2ca;
+    --tinta: #141414;
+    --tinta-2: #4a4a46;
+    --escuro: #141414;
+    --escuro-2: #222220;
+    --escuro-3: #2e2e2b;
+    --claro: #f4f3ee;
+    --claro-2: #b9b8b1;
+    --acento: #ff4f1a;
+
+    --fonte: 'Bricolage Grotesque', system-ui, sans-serif;
+
+    --t-gigante: clamp(3.4rem, 14.2vw, 15rem);
+    --t-titulo: clamp(2.4rem, 5.6vw, 5.25rem);
+    --t-sub: clamp(1.6rem, 2.4vw, 2.25rem);
+    --t-texto: 1.125rem;
+    --t-nota: 0.9375rem;
+
+    /* um par de margens e um respiro iguais para todas as faixas */
+    --margem: clamp(16px, 2.4vw, 32px);
+    --respiro: clamp(88px, 10vw, 160px);
+    --gap: clamp(16px, 2vw, 28px);
+    --altura-topo: 70px;
+
+    --ease: cubic-bezier(.2, .7, .2, 1);
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--altura-topo);
+}
+
+body {
+    background: var(--fundo);
+    color: var(--tinta);
+    font-family: var(--fonte);
+    font-size: var(--t-texto);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+a {
+    color: inherit;
+}
+
+:focus-visible {
+    outline: 3px solid var(--acento);
+    outline-offset: 3px;
+}
+
+::selection {
+    background: var(--acento);
+    color: var(--escuro);
+}
+
+h1,
+h2,
+h3 {
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 0.95;
+}
+
+/* ---------- Componentes ---------- */
+.botao {
+    display: inline-block;
+    background: var(--acento);
+    color: var(--escuro);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    padding: 0.95rem 1.6rem;
+    border: 0;
+    cursor: pointer;
+    transition: transform .25s var(--ease), background-color .25s ease;
+}
+
+.botao:hover {
+    transform: translateY(-3px);
+    background: #ff6a3d;
+}
+
+.botao:active {
+    transform: translateY(0) scale(.98);
+}
+
+.botao-pequeno {
+    padding: 0.6rem 1.1rem;
+    font-size: var(--t-nota);
+}
+
+.botao-claro {
+    background: var(--claro);
+}
+
+.botao-claro:hover {
+    background: var(--acento);
+}
+
+.link-forte {
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+    transition: color .2s ease, text-underline-offset .2s var(--ease);
+}
+
+.link-forte:hover {
+    color: var(--acento);
+    text-underline-offset: 8px;
+}
+
+/* ---------- Topo ---------- */
+.topo {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--altura-topo);
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+    padding: 0 var(--margem);
+    background: var(--fundo);
+}
+
+.marca {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+    margin-right: auto;
+}
+
+.menu {
+    display: flex;
+    gap: clamp(16px, 2.2vw, 32px);
+}
+
+.menu a {
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+}
+
+.menu a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3px;
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s var(--ease);
+}
+
+.menu a:hover::after {
+    transform: scaleX(1);
+}
+
+/* ---------- Faixas e grade ----------
+   Toda seção é uma faixa de ponta a ponta com o mesmo respiro em cima e embaixo;
+   dentro dela, uma grade de 12 colunas. Os blocos começam sempre na coluna 1, 5 ou 9. */
+.faixa {
+    padding: var(--respiro) var(--margem);
+}
+
+.faixa-escura {
+    background: var(--escuro);
+    color: var(--claro);
+}
+
+.faixa-tom {
+    background: var(--fundo-2);
+}
+
+.faixa-acento {
+    background: var(--acento);
+    color: var(--escuro);
+}
+
+.grade {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 40px var(--gap);
+    align-items: start;
+}
+
+.lado-esquerdo { grid-column: 1 / 5; }
+.lado-direito { grid-column: 5 / -1; }
+.lado-esquerdo-largo { grid-column: 1 / 9; }
+.lado-direito-estreito { grid-column: 9 / -1; }
+
+.titulo-secao {
+    font-size: var(--t-titulo);
+    margin-bottom: clamp(36px, 4.5vw, 64px);
+}
+
+/* ---------- Início ---------- */
+.inicio {
+    padding-top: clamp(16px, 2.5vw, 32px);
+}
+
+.nome {
+    font-size: var(--t-gigante);
+    line-height: 0.88;
+    letter-spacing: -0.055em;
+    margin-bottom: clamp(24px, 3vw, 40px);
+    white-space: nowrap;
+}
+
+.lado-esquerdo {
+    display: grid;
+    gap: clamp(40px, 5vw, 64px);
+}
+
+.apresentacao {
+    font-size: clamp(1.25rem, 1.7vw, 1.6rem);
+    line-height: 1.35;
+    font-weight: 500;
+}
+
+.acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+    margin-top: 28px;
+}
+
+/* ---------- Palco: projetos rodando num iframe ---------- */
+.tela {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--escuro);
+}
+
+.faixa-escura .tela {
+    background: var(--escuro-2);
+}
+
+.tela iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.js .tela iframe {
+    transform-origin: 0 0;
+}
+
+.abas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.abas a,
+.abas .vaga {
+    text-decoration: none;
+    font-weight: 700;
+    font-size: var(--t-nota);
+    padding: 9px 16px;
+    background: var(--fundo-2);
+    transition: background-color .2s ease, transform .2s var(--ease);
+}
+
+.abas a:hover {
+    transform: translateY(-2px);
+    background: var(--fundo-3);
+}
+
+.abas a.ativo {
+    background: var(--tinta);
+    color: var(--claro);
+}
+
+.abas .vaga {
+    font-weight: 500;
+    color: var(--tinta-2);
+    background: transparent;
+    cursor: default;
+}
+
+.faixa-escura .abas a {
+    background: var(--escuro-3);
+}
+
+.faixa-escura .abas a:hover {
+    background: #3d3d39;
+}
+
+.faixa-escura .abas a.ativo {
+    background: var(--claro);
+    color: var(--escuro);
+}
+
+.palco-info h2,
+.palco-info h3 {
+    font-size: var(--t-sub);
+    margin-bottom: 16px;
+}
+
+.palco-info p+p {
+    margin-top: 12px;
+}
+
+.palco-info .usei {
+    font-size: var(--t-nota);
+    color: var(--tinta-2);
+}
+
+.faixa-escura .palco-info .usei {
+    color: var(--claro-2);
+}
+
+.palco-info .link-forte {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.js .info[hidden] {
+    display: none;
+}
+
+.js .info {
+    animation: entrar-info .45s var(--ease);
+}
+
+@keyframes entrar-info {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+.intro-secao {
+    font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+    line-height: 1.35;
+    font-weight: 500;
+    margin-bottom: clamp(32px, 4vw, 56px);
+}
+
+/* ---------- Loja ---------- */
+.intro-loja {
+    font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+    line-height: 1.35;
+    font-weight: 500;
+    max-width: 40ch;
+    margin-bottom: clamp(36px, 4.5vw, 64px);
+}
+
+#loja .titulo-secao {
+    margin-bottom: 24px;
+}
+
+.produtos {
+    list-style: none;
+    display: grid;
+    gap: 6px;
+}
+
+.produto {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 20px var(--gap);
+    align-items: start;
+    background: var(--fundo);
+    padding: clamp(24px, 3vw, 40px) var(--margem);
+    transition: background-color .25s ease;
+}
+
+.produto:hover {
+    background: var(--claro);
+}
+
+.produto h3 {
+    grid-column: 1 / 5;
+    font-size: var(--t-sub);
+}
+
+.produto > p {
+    grid-column: 5 / 10;
+}
+
+.produto .condicoes {
+    grid-column: 10 / -1;
+    display: grid;
+    gap: 6px;
+    font-size: var(--t-nota);
+}
+
+.condicoes div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.condicoes dt {
+    color: var(--tinta-2);
+}
+
+.condicoes dd {
+    font-weight: 700;
+    text-align: right;
+}
+
+.produto .botao {
+    grid-column: 10 / -1;
+    text-align: center;
+}
+
+/* ---------- Sobre ---------- */
+.sobre-texto {
+    grid-column: 1 / 5;
+}
+
+.foto {
+    width: clamp(96px, 10vw, 140px);
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 28px;
+}
+
+.frase {
+    font-size: clamp(1.4rem, 2vw, 1.9rem);
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+}
+
+.sobre-texto p+p {
+    margin-top: 14px;
+}
+
+.ferramentas {
+    grid-column: 5 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+
+.ferramentas div {
+    background: var(--fundo-2);
+    padding: 22px 24px;
+    transition: transform .25s var(--ease), background-color .25s ease;
+}
+
+.ferramentas div:hover {
+    transform: translateY(-4px);
+    background: var(--fundo-3);
+}
+
+.ferramentas dt {
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+}
+
+/* ---------- Contato ---------- */
+.contato-canais {
+    grid-column: 1 / 5;
+}
+
+.canais {
+    list-style: none;
+    margin-top: 32px;
+    display: grid;
+    gap: 6px;
+}
+
+.canais a {
+    display: block;
+    text-decoration: none;
+    font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+    font-weight: 700;
+    padding: 12px 0;
+    overflow-wrap: anywhere;
+    transition: transform .25s var(--ease);
+}
+
+.canais a:hover {
+    transform: translateX(8px);
+}
+
+.canais span {
+    display: block;
+    font-size: var(--t-nota);
+    font-weight: 500;
+}
+
+.formulario {
+    grid-column: 5 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px var(--gap);
+    background: var(--escuro);
+    color: var(--claro);
+    padding: clamp(20px, 3vw, 40px);
+}
+
+.formulario label {
+    display: grid;
+    gap: 8px;
+    font-weight: 700;
+    font-size: var(--t-nota);
+}
+
+.formulario label:nth-of-type(3),
+.formulario .botao {
+    grid-column: 1 / -1;
+}
+
+.formulario input,
+.formulario textarea {
+    font: inherit;
+    font-weight: 400;
+    font-size: 1rem;
+    color: var(--claro);
+    background: var(--escuro-2);
+    border: 2px solid transparent;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color .2s ease;
+}
+
+.formulario input:focus,
+.formulario textarea:focus {
+    border-color: var(--acento);
+}
+
+.formulario textarea {
+    resize: vertical;
+    min-height: 140px;
+}
+
+.formulario .botao {
+    justify-self: start;
+    margin-top: 6px;
+}
+
+/* ---------- Rodapé ---------- */
+.rodape {
+    background: var(--escuro);
+    color: var(--claro);
+    padding: clamp(56px, 7vw, 96px) var(--margem) 28px;
+}
+
+.rodape-nome {
+    font-size: var(--t-gigante);
+    font-weight: 800;
+    letter-spacing: -0.055em;
+    line-height: 0.88;
+    white-space: nowrap;
+}
+
+.rodape-linha {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 40px;
+    font-size: var(--t-nota);
+    color: var(--claro-2);
+}
+
+/* ---------- Entradas ---------- */
+.js .revelar {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity .8s var(--ease), transform .8s var(--ease);
+    transition-delay: var(--atraso, 0ms);
+}
+
+.js .revelar.visivel {
+    opacity: 1;
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .js .revelar {
+        transform: none;
+        transition: opacity .3s ease;
+    }
+
+    .js .info {
+        animation: none;
+    }
+
+    .botao,
+    .canais a,
+    .ferramentas div,
+    .abas a {
+        transition: none;
+    }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1000px) {
+    .lado-esquerdo,
+    .lado-direito,
+    .lado-esquerdo-largo,
+    .lado-direito-estreito,
+    .sobre-texto,
+    .ferramentas,
+    .contato-canais,
+    .formulario {
+        grid-column: 1 / -1;
+    }
+
+    /* no início: apresentação, depois o jogo, depois o texto sobre o jogo */
+    .inicio .lado-esquerdo {
+        display: contents;
+    }
+
+    .inicio .lado-esquerdo > :first-child { order: 1; grid-column: 1 / -1; }
+    .inicio .palco { order: 2; }
+    .inicio .palco-info { order: 3; grid-column: 1 / -1; }
+
+    .apresentacao {
+        max-width: 34ch;
+    }
+
+    .produto h3,
+    .produto > p {
+        grid-column: 1 / -1;
+    }
+
+    .produto .condicoes {
+        grid-column: 1 / 7;
+    }
+
+    .produto .botao {
+        grid-column: 8 / -1;
+        align-self: end;
+    }
+}
+
+/* ---------- Celular ---------- */
+@media (max-width: 640px) {
+    :root {
+        --altura-topo: 60px;
+    }
+
+    .menu {
+        display: none;
+    }
+
+    .nome,
+    .rodape-nome {
+        white-space: normal;
+        font-size: clamp(3.4rem, 19vw, 6rem);
+    }
+
+    .tela {
+        aspect-ratio: 4 / 5;
+    }
+
+    .ferramentas,
+    .formulario {
+        grid-template-columns: 1fr;
+    }
+
+    .produto .condicoes,
+    .produto .botao {
+        grid-column: 1 / -1;
+    }
+}

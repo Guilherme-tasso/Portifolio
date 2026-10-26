@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guilherme Tasso | Desenvolvedor Front-end</title>
+    <meta name="description" content="Portfólio de Guilherme Tasso, desenvolvedor front-end e estudante de Ciência da Computação na FSG.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>document.documentElement.classList.add('js');</script>
+</head>
+
+<body>
+
+    <header class="topo">
+        <a href="#inicio" class="marca">Guilherme Tasso</a>
+        <nav class="menu" aria-label="Principal">
+            <a href="#jogos">Jogos</a>
+            <a href="#recriacoes">Recriações</a>
+            <a href="#sites">Sites</a>
+            <a href="#loja">Loja</a>
+            <a href="#contato">Contato</a>
+        </nav>
+        <a class="botao botao-pequeno" href="https://wa.me/5554999842511?text=Ol%C3%A1%2C%20visitei%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar!" target="_blank" rel="noopener">WhatsApp</a>
+    </header>
+
+    <main>
+
+        <!-- Início: o nome e os jogos rodando de verdade -->
+        <section id="inicio" class="faixa inicio">
+            <h1 class="nome revelar">Guilherme Tasso</h1>
+
+            <div class="grade" id="jogos">
+                <div class="lado lado-esquerdo">
+                    <div class="revelar">
+                        <p class="apresentacao">Desenvolvedor front-end e estudante de Ciência da Computação na FSG. Tudo aqui roda de verdade: escolha um jogo e jogue.</p>
+                        <div class="acoes">
+                            <a class="botao" href="#recriacoes">Ver os projetos</a>
+                            <a class="link-forte" href="#contato">Falar comigo</a>
+                        </div>
+                    </div>
+
+                    <div class="palco-info revelar" data-info-de="jogos">
+                        <div class="info" data-info="damas">
+                            <h2>Damas da Praça</h2>
+                            <p>Damas com regras brasileiras contra o computador, em três níveis, ou contra outra pessoa no mesmo aparelho. Tem desfazer, súmula dos lances e som.</p>
+                            <p class="usei">JavaScript puro, IA com busca alfa-beta, Web Audio.</p>
+                            <a class="link-forte" href="projetos/damas/index.html" target="_blank" rel="noopener">Abrir em tela cheia</a>
+                        </div>
+                        <div class="info" data-info="nave">
+                            <h2>Astro Vanguarda</h2>
+                            <p>Jogo de nave com fases, chefes, melhorias e três poderes: bomba, escudo e laser. Clique na tela para jogar; setas ou WASD movem a nave.</p>
+                            <p class="usei">Canvas 2D, laço de jogo, áudio gerado no navegador.</p>
+                            <a class="link-forte" href="projetos/nave/index.html" target="_blank" rel="noopener">Abrir em tela cheia</a>
+                        </div>
+                        <div class="info" data-info="cozy">
+                            <h2>Cozy Organizer</h2>
+                            <p>Arrume a casa com o gato Biscoito: arraste cada objeto para o lugar certo, destrave cômodos e complete o álbum de memórias.</p>
+                            <p class="usei">JavaScript com arrastar e soltar, atalhos de teclado, progresso salvo.</p>
+                            <a class="link-forte" href="projetos/cozy-organizer/index.html" target="_blank" rel="noopener">Abrir em tela cheia</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="palco lado-direito revelar" data-palco="jogos">
+                    <div class="tela">
+                        <iframe name="palco-jogos" src="projetos/damas/index.html" title="Jogo rodando: Damas da Praça"></iframe>
+                    </div>
+                    <div class="abas" role="group" aria-label="Escolher jogo">
+                        <a href="projetos/damas/index.html" target="palco-jogos" data-info="damas" class="ativo" aria-current="true">Damas</a>
+                        <a href="projetos/nave/index.html" target="palco-jogos" data-info="nave">Astro Vanguarda</a>
+                        <a href="projetos/cozy-organizer/index.html" target="palco-jogos" data-info="cozy">Cozy Organizer</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recriações -->
+        <section id="recriacoes" class="faixa faixa-escura">
+            <h2 class="titulo-secao revelar">Recriações</h2>
+            <div class="grade">
+                <div class="palco lado-esquerdo-largo revelar" data-palco="recriacoes">
+                    <div class="tela">
+                        <iframe name="palco-recriacoes" src="projetos/amazon/index.html" title="Projeto rodando: Amazon" loading="lazy"></iframe>
+                    </div>
+                    <div class="abas" role="group" aria-label="Escolher recriação">
+                        <a href="projetos/amazon/index.html" target="palco-recriacoes" data-info="amazon" class="ativo" aria-current="true">Amazon</a>
+                        <a href="projetos/netflix/index.html" target="palco-recriacoes" data-info="netflix">Netflix</a>
+                        <a href="projetos/spotify/index.html" target="palco-recriacoes" data-info="spotify">Spotify</a>
+                    </div>
+                </div>
+
+                <div class="palco-info lado-direito-estreito revelar" data-info-de="recriacoes">
+                    <p class="intro-secao">Três sites que todo mundo usa, refeitos do zero para entender como eles organizam as telas.</p>
+                    <div class="info" data-info="amazon">
+                        <h3>Amazon</h3>
+                        <p>Loja com busca e sugestões, filtros na URL, página de produto, carrinho, checkout com CEP preenchido pela ViaCEP e histórico de pedidos.</p>
+                        <p class="usei">React 19, TypeScript, React Router, Vite, API DummyJSON.</p>
+                        <a class="link-forte" href="projetos/amazon/index.html" target="_blank" rel="noopener">Abrir em tela cheia</a>
+                    </div>
+                    <div class="info" data-info="netflix">
+                        <h3>Netflix</h3>
+                        <p>Escolha de perfil, banner de destaque, fileiras de séries e filmes, busca, Minha lista e janela de detalhes de cada título.</p>
+                        <p class="usei">HTML, CSS e JavaScript puro, sem framework.</p>
+                        <a class="link-forte" href="projetos/netflix/index.html" target="_blank" rel="noopener">Abrir em tela cheia</a>
+                    </div>
+                    <div class="info" data-info="spotify">
+                        <h3>Spotify</h3>
+                        <p>Player completo com fila, aleatório e repetir, biblioteca e playlists próprias. Não há arquivos de áudio: cada música é composta e tocada pelo navegador.</p>
+                        <p class="usei">JavaScript puro, Web Audio API, capas em SVG geradas.</p>
+                        <a class="link-forte" href="projetos/spotify/index.html" target="_blank" rel="noopener">Abrir em tela cheia</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sites -->
+        <section id="sites" class="faixa">
+            <h2 class="titulo-secao revelar">Sites</h2>
+            <div class="grade">
+                <div class="palco-info lado-esquerdo revelar" data-info-de="apps">
+                    <div class="info" data-info="clima">
+                        <h3>Clima e Tempo</h3>
+                        <p>Funciona aqui mesmo: pesquise a sua cidade. Mostra temperatura, sensação, umidade, vento e a previsão de 5 dias, e troca a foto de fundo conforme o clima.</p>
+                        <p class="usei">Fetch, async/await, geolocalização, API da OpenWeatherMap.</p>
+                        <a class="link-forte" href="projetos/clima/index.html" target="_blank" rel="noopener">Abrir em tela cheia</a>
+                    </div>
+                    <div class="info" data-info="oficina">
+                        <h3>Oficina AutoForce</h3>
+                        <p>Site e loja de uma oficina mecânica: simule o preço de um serviço pelo tamanho do carro, monte o carrinho de peças e envie o pedido pronto pelo WhatsApp.</p>
+                        <p class="usei">JavaScript puro, carrinho no localStorage, checkout com frete e desconto no Pix.</p>
+                        <a class="link-forte" href="projetos/oficina/index.html" target="_blank" rel="noopener">Abrir em tela cheia</a>
+                    </div>
+                </div>
+
+                <div class="palco lado-direito revelar" data-palco="apps">
+                    <div class="tela">
+                        <iframe name="palco-apps" src="projetos/clima/index.html" title="Site rodando: Clima e Tempo" loading="lazy"></iframe>
+                    </div>
+                    <div class="abas" role="group" aria-label="Escolher site">
+                        <a href="projetos/clima/index.html" target="palco-apps" data-info="clima" class="ativo" aria-current="true">Clima e Tempo</a>
+                        <a href="projetos/oficina/index.html" target="palco-apps" data-info="oficina">Oficina AutoForce</a>
+                        <!-- Vagas para os próximos projetos: troque o <span> por um <a> igual aos de cima -->
+                        <span class="vaga">Em breve</span>
+                        <span class="vaga">Em breve</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loja: projetos à venda e por assinatura -->
+        <section id="loja" class="faixa faixa-tom">
+            <h2 class="titulo-secao revelar">Loja</h2>
+            <p class="intro-loja revelar">Alguns projetos viraram produto. Dá para comprar uma vez ou assinar por mês, e eu instalo e ajusto para o seu negócio.</p>
+
+            <ul class="produtos">
+                <li class="produto revelar">
+                    <h3>Sistema de gestão</h3>
+                    <p>Para salões, barbearias, clínicas e lojas com uma ou várias unidades: caixa (PDV), agenda por profissional, estoque, clientes com pontos de fidelidade, cupons e painel de faturamento. Roda sobre um banco de 30 tabelas.</p>
+                    <dl class="condicoes">
+                        <div><dt>Modelo</dt><dd>Assinatura mensal</dd></div>
+                        <div><dt>Valor</dt><dd>Sob consulta</dd></div>
+                    </dl>
+                    <a class="botao" href="https://wa.me/5554999842511?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Sistema%20de%20gest%C3%A3o." target="_blank" rel="noopener">Quero assinar</a>
+                </li>
+                <li class="produto revelar">
+                    <h3>Plataforma de cursos</h3>
+                    <p>Venda cursos em vídeo no seu próprio site: vitrine, página de cada curso, checkout com cupons, área do aluno com progresso e um painel para você configurar tudo.</p>
+                    <dl class="condicoes">
+                        <div><dt>Modelo</dt><dd>Assinatura mensal</dd></div>
+                        <div><dt>Valor</dt><dd>Sob consulta</dd></div>
+                    </dl>
+                    <a class="botao" href="https://wa.me/5554999842511?text=Ol%C3%A1!%20Tenho%20interesse%20na%20Plataforma%20de%20cursos." target="_blank" rel="noopener">Quero assinar</a>
+                </li>
+                <li class="produto revelar">
+                    <h3>PC Organizer</h3>
+                    <p>Programa para Windows 10 e 11 que organiza, diagnostica e monitora o computador: hardware em detalhe, rede, FPS nos jogos, teste de estresse e manutenção com confirmação.</p>
+                    <dl class="condicoes">
+                        <div><dt>Modelo</dt><dd>Compra única</dd></div>
+                        <div><dt>Valor</dt><dd>Sob consulta</dd></div>
+                    </dl>
+                    <a class="botao" href="https://wa.me/5554999842511?text=Ol%C3%A1!%20Tenho%20interesse%20no%20PC%20Organizer." target="_blank" rel="noopener">Quero comprar</a>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Sobre -->
+        <section id="sobre" class="faixa">
+            <h2 class="titulo-secao revelar">Sobre mim</h2>
+            <div class="grade">
+                <div class="sobre-texto lado-esquerdo-meio revelar">
+                    <img class="foto" src="img/perfil.jpg" alt="Avatar de Guilherme Tasso" width="768" height="768" loading="lazy">
+                    <p class="frase">Comecei pelo HTML e CSS e fui descendo: JavaScript, APIs, banco de dados e servidor.</p>
+                    <p>Estudo Ciência da Computação na FSG e uso cada projeto para aprender uma coisa nova. Os jogos me ensinaram canvas e lógica de turnos, o Clima me ensinou a falar com uma API, e as recriações me mostraram como sites grandes organizam suas telas.</p>
+                    <p>Procuro estágio ou primeiro emprego em front-end, e topo projetos freelance de sites e sistemas.</p>
+                </div>
+                <dl class="ferramentas lado-direito-meio revelar">
+                    <div><dt>HTML e CSS</dt><dd>Flexbox, Grid, layouts responsivos e animações.</dd></div>
+                    <div><dt>JavaScript</dt><dd>Canvas, Web Audio, Fetch, arrastar e soltar.</dd></div>
+                    <div><dt>React e TypeScript</dt><dd>Componentes, rotas e estado, como na Amazon.</dd></div>
+                    <div><dt>Node.js</dt><dd>Servidores e APIs para a plataforma de cursos e o sistema de gestão.</dd></div>
+                    <div><dt>MySQL e SQLite</dt><dd>Modelagem, chaves estrangeiras e índices.</dd></div>
+                    <div><dt>Python</dt><dd>Programas para Windows, como o PC Organizer.</dd></div>
+                </dl>
+            </div>
+        </section>
+
+        <!-- Contato -->
+        <section id="contato" class="faixa faixa-acento">
+            <h2 class="titulo-secao revelar">Vamos conversar</h2>
+            <div class="grade">
+                <div class="contato-canais lado-esquerdo-meio revelar">
+                    <p>Respondo mais rápido pelo WhatsApp. Se preferir, mande uma mensagem pelo formulário que ela chega no meu e-mail.</p>
+                    <ul class="canais">
+                        <li><a href="https://wa.me/5554999842511?text=Ol%C3%A1%2C%20visitei%20seu%20portf%C3%B3lio%20e%20gostaria%20de%20conversar!" target="_blank" rel="noopener"><span>WhatsApp</span> (54) 99984-2511</a></li>
+                        <li><a href="mailto:gui.tasso.dev@gmail.com"><span>E-mail</span> gui.tasso.dev@gmail.com</a></li>
+                        <!-- Coloque aqui os links reais e tire o comentário:
+                        <li><a href="https://github.com/SEU_USUARIO" target="_blank" rel="noopener"><span>GitHub</span> github.com/SEU_USUARIO</a></li>
+                        <li><a href="https://www.linkedin.com/in/SEU_USUARIO" target="_blank" rel="noopener"><span>LinkedIn</span> linkedin.com/in/SEU_USUARIO</a></li>
+                        -->
+                    </ul>
+                </div>
+
+                <form action="https://formsubmit.co/gui.tasso.dev@gmail.com" method="POST" class="formulario lado-direito-meio revelar">
+                    <input type="hidden" name="_subject" value="Nova mensagem pelo portfólio">
+                    <label>Nome
+                        <input type="text" name="nome" autocomplete="name" required>
+                    </label>
+                    <label>E-mail
+                        <input type="email" name="email" autocomplete="email" required>
+                    </label>
+                    <label>Mensagem
+                        <textarea name="mensagem" rows="6" required></textarea>
+                    </label>
+                    <button type="submit" class="botao botao-claro">Enviar mensagem</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="rodape">
+        <p class="rodape-nome">Guilherme Tasso</p>
+        <p class="rodape-linha">
+            <span>Feito à mão com HTML, CSS e JavaScript. 2026.</span>
+            <a href="#inicio" class="link-forte">Voltar ao topo</a>
+        </p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
