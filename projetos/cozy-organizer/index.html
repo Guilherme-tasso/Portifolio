@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cozy Organizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5ede1; --dot:#e7d8c3; --paper:#fffaf3; --ink:#4a3a2e; --muted:#8b7562;
+  --line:#e6d6c2; --accent:#d9825b; --accent-ink:#fff; --ok:#6fa77c; --bad:#d9675b; --gold:#e0a33c;
+  --shadow:0 1px 2px rgba(74,58,46,.08),0 6px 18px rgba(74,58,46,.10);
+  --cat:#e9a462; --cat-dark:#c97f3c; --cat-belly:#f6d3ac; --cat-ear:#f4b9a0; --cat-nose:#d97a6c; --cat-eye:#3b2a20;
+  --radius:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#211b17; --dot:#2d251f; --paper:#2d2520; --ink:#f2e6d7; --muted:#b39e8a;
+    --line:#44382f; --accent:#e8946a; --accent-ink:#2a1d15;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.35);
+    --cat-eye:#1d140e;
+  }
+}
+*{box-sizing:border-box}
+html{color-scheme:light dark}
+body{
+  margin:0; min-height:100vh; padding-bottom:140px;
+  font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--ink); background-color:var(--bg);
+  background-image:radial-gradient(var(--dot) 1.2px,transparent 1.7px);
+  background-size:22px 22px;
+  -webkit-tap-highlight-color:transparent;
+}
+h1,h2,h3{font-family:"Fredoka","Nunito",system-ui,sans-serif;font-weight:600;margin:0;letter-spacing:-.01em}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.muted{color:var(--muted)}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px}
+
+/* ---------- topo ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand h1{font-size:clamp(1.7rem,3.6vw,2.3rem)}
+.brand p{margin:2px 0 0;color:var(--muted)}
+.tools{display:flex;gap:8px}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  border:1px solid var(--line);background:var(--paper);box-shadow:var(--shadow);
+  padding:9px 14px;border-radius:999px;font-weight:700;font-size:.95rem;
+  transition:transform .15s,background .15s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}
+.btn.ghost{box-shadow:none;background:transparent;border-color:transparent;padding:6px 10px}
+.btn.ghost:hover{background:color-mix(in srgb,var(--line) 50%,transparent)}
+
+.rooms{display:flex;gap:8px;margin:18px 0 12px;flex-wrap:wrap}
+.room{
+  display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700;
+  border:1px solid var(--line);border-radius:12px;padding:8px 12px;
+  background:color-mix(in srgb,var(--paper) 65%,transparent);
+}
+.room .stars{color:var(--gold);letter-spacing:1px;font-size:.9rem}
+.room.current{background:var(--paper);border-color:var(--accent);box-shadow:var(--shadow)}
+.room:disabled{opacity:.5;cursor:not-allowed}
+
+.hud{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);
+  padding:12px 16px;box-shadow:var(--shadow);
+}
+.hud h2{font-size:1.3rem;margin-right:auto}
+.progress{flex:1 1 140px;max-width:260px;height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--ok);border-radius:inherit;transition:width .4s ease}
+.stats{display:flex;gap:6px;flex-wrap:wrap}
+.stat{
+  font-variant-numeric:tabular-nums;font-size:.88rem;font-weight:700;white-space:nowrap;
+  padding:4px 10px;border-radius:99px;background:color-mix(in srgb,var(--line) 60%,transparent);
+}
+.hint-line{color:var(--muted);font-size:.95rem;margin:12px 2px 16px}
+
+/* ---------- tabuleiro ---------- */
+.board{display:grid;grid-template-columns:minmax(250px,310px) 1fr;gap:18px;align-items:start}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+.pile{position:sticky;top:16px}
+.pile-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.pile-head h3{font-size:1.15rem}
+.pile-head small{color:var(--muted);font-weight:700}
+#items{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:8px;min-height:110px}
+.empty{grid-column:1/-1;display:grid;place-items:center;text-align:center;color:var(--muted);padding:28px 10px;font-weight:700}
+
+.item{
+  display:flex;align-items:center;gap:8px;text-align:left;cursor:grab;
+  padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--accent) 6%,var(--paper));
+  font-weight:700;font-size:.95rem;line-height:1.2;
+  touch-action:none;user-select:none;-webkit-user-select:none;
+  box-shadow:0 2px 0 var(--line);
+  transition:transform .15s,box-shadow .15s,opacity .15s,border-color .15s;
+}
+.item .em{font-size:1.55rem;line-height:1;flex:none}
+.item:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.item.selected{
+  border-color:var(--accent);transform:translateY(-3px) rotate(-1.5deg);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent),var(--shadow);
+}
+.item.lifting{opacity:.3}
+.item.shake{animation:shake .4s}
+.drag-ghost{
+  position:fixed;z-index:50;pointer-events:none;margin:0;cursor:grabbing;
+  transform:rotate(-4deg) scale(1.06);box-shadow:0 14px 30px rgba(0,0,0,.22);
+}
+
+.zones{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.zone{
+  --tint:#999;position:relative;display:flex;flex-direction:column;min-height:200px;cursor:pointer;
+  background:color-mix(in srgb,var(--tint) 10%,var(--paper));
+  border:1px solid color-mix(in srgb,var(--tint) 35%,var(--line));
+  border-radius:var(--radius);padding:12px;box-shadow:var(--shadow);
+  transition:transform .15s,border-color .15s,box-shadow .2s;
+}
+.zone-head{display:flex;align-items:center;gap:8px;font-family:"Fredoka","Nunito",sans-serif;font-weight:600;font-size:1.02rem}
+.zone-head .ic{
+  flex:none;width:36px;height:36px;display:grid;place-items:center;font-size:1.3rem;
+  border-radius:10px;background:color-mix(in srgb,var(--tint) 24%,var(--paper));
+}
+.zone-head .count{margin-left:auto;font-family:"Nunito",sans-serif;font-size:.85rem;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.zone.full .count{color:var(--ok)}
+.zone-drop{
+  flex:1;margin-top:10px;padding:8px;border-radius:12px;
+  border:2px dashed color-mix(in srgb,var(--tint) 45%,var(--line));
+  display:flex;flex-wrap:wrap;align-content:flex-start;gap:6px;
+  transition:background .2s,border-color .2s;
+}
+.zone.over{transform:scale(1.02);border-color:var(--tint)}
+.zone.over .zone-drop{border-style:solid;border-color:var(--tint);background:color-mix(in srgb,var(--tint) 16%,transparent)}
+.board.awaiting .zone:not(.full) .zone-drop{animation:breathe 1.6s ease-in-out infinite}
+.zone.hint{box-shadow:0 0 0 4px color-mix(in srgb,var(--tint) 60%,transparent),var(--shadow);animation:bump .5s}
+.zone.bad{animation:shake .4s}
+.zone.bad .zone-drop{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.chip{
+  display:inline-flex;align-items:center;gap:5px;cursor:help;
+  padding:5px 9px;border-radius:99px;font-size:.85rem;font-weight:700;
+  border:1px solid color-mix(in srgb,var(--tint) 40%,var(--line));background:var(--paper);
+  animation:pop .35s cubic-bezier(.3,1.6,.5,1);
+}
+
+/* ---------- gato ---------- */
+.companion{
+  position:fixed;right:16px;bottom:10px;z-index:40;pointer-events:none;
+  display:flex;align-items:flex-end;gap:6px;max-width:min(470px,calc(100vw - 32px));
+}
+.bubble{
+  pointer-events:auto;margin-bottom:48px;padding:10px 14px;line-height:1.4;font-size:.95rem;
+  background:var(--paper);border:1px solid var(--line);border-radius:16px 16px 4px 16px;box-shadow:var(--shadow);
+  transform-origin:bottom right;transition:opacity .4s,transform .4s;
+}
+.bubble small{display:block;font-weight:800;color:var(--accent);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.bubble.pop{animation:pop .3s}
+.bubble.quiet{opacity:0;transform:translateY(8px);pointer-events:none}
+.cat{flex:none;pointer-events:auto;width:96px;height:90px;border:0;background:none;padding:0;cursor:pointer}
+.cat svg{width:100%;height:100%;overflow:visible;display:block}
+.cat .tail{transform-origin:86px 96px;animation:wag 3s ease-in-out infinite}
+.cat .eyes{transform-origin:60px 48px;animation:blink 5s infinite}
+.cat .happy-eyes{opacity:0}
+.cat.happy .eyes{opacity:0}
+.cat.happy .happy-eyes{opacity:1}
+.cat.happy svg{animation:hop .5s}
+.cat .head{transform-origin:60px 74px;transition:transform .3s}
+.cat.confused .head{transform:rotate(-12deg)}
+.cat:hover .head{transform:rotate(6deg)}
+
+/* ---------- diálogos ---------- */
+dialog{
+  border:none;border-radius:20px;padding:0;background:var(--paper);color:var(--ink);
+  box-shadow:0 20px 60px rgba(0,0,0,.3);width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 48px);
+}
+dialog::backdrop{background:rgba(40,28,20,.45);backdrop-filter:blur(2px)}
+#albumDlg{width:min(780px,calc(100vw - 32px))}
+.dlg{padding:24px}
+.end{text-align:center}
+.end h2{font-size:1.6rem;margin-top:4px}
+.end p{margin:6px 0}
+.big-stars{font-size:2.6rem;color:var(--gold);letter-spacing:4px;line-height:1}
+.big-stars .dim{color:var(--line)}
+.summary{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:14px 0}
+.record{font-weight:800;color:var(--gold)}
+.end h3{font-size:1rem;margin:16px 0 8px;text-align:left}
+.mem-list{text-align:left;list-style:none;padding:0;margin:0;display:grid;gap:8px;max-height:230px;overflow:auto}
+.mem-list li{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:12px;background:color-mix(in srgb,var(--line) 40%,transparent);font-size:.92rem}
+.mem-list .em{font-size:1.4rem;line-height:1}
+.dlg-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.album-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.album h3{margin:18px 0 8px;font-size:1.02rem}
+.album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.mem{padding:10px 12px;border-radius:12px;font-size:.9rem;line-height:1.35;border:1px solid color-mix(in srgb,var(--tint,var(--line)) 40%,var(--line));background:color-mix(in srgb,var(--tint,transparent) 8%,var(--paper))}
+.mem b{display:block;margin-bottom:2px}
+.mem.locked{color:var(--muted);border-style:dashed;background:transparent}
+.confetti{position:fixed;top:-30px;z-index:60;pointer-events:none;font-size:1.4rem;animation:fall var(--d) linear forwards}
+
+/* ---------- animações ---------- */
+@keyframes wag{0%,100%{transform:rotate(0)}50%{transform:rotate(14deg)}}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-10px)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes bump{50%{transform:scale(1.04)}}
+@keyframes breathe{50%{border-color:var(--tint)}}
+@keyframes fall{to{transform:translate(var(--x),110vh) rotate(var(--r))}}
+
+@media (max-width:720px){
+  body{padding-bottom:160px}
+  .board{grid-template-columns:1fr}
+  .pile{position:static}
+  #items{grid-template-columns:repeat(2,1fr)}
+  .zones{grid-template-columns:repeat(2,1fr);gap:10px}
+  .zone{min-height:150px;padding:10px}
+  .zone-head{font-size:.92rem}
+  .hud h2{flex-basis:100%}
+  .cat{width:72px;height:68px}
+  .bubble{margin-bottom:36px;font-size:.88rem}
+  .tools .label{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+<link rel="stylesheet" href="../tema-portfolio.css">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+</head>
+<body class="tema-cozy">
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>🧺 Cozy Organizer</h1>
+      <p>Arrume a casa com o Biscoito e reencontre as memórias guardadas em cada objeto.</p>
+    </div>
+    <div class="tools">
+      <button class="btn" id="albumBtn" type="button">📔 <span class="label">Álbum</span> <span id="albumCount"></span></button>
+      <button class="btn" id="soundBtn" type="button"></button>
+    </div>
+  </header>
+
+  <nav class="rooms" id="rooms" aria-label="Cômodos"></nav>
+
+  <section class="hud" aria-label="Progresso">
+    <h2 id="roomName"></h2>
+    <div class="progress" id="progress" role="progressbar" aria-label="Objetos guardados" aria-valuemin="0"><i id="bar"></i></div>
+    <div class="stats">
+      <span class="stat" id="time" title="Tempo"></span>
+      <span class="stat" id="moves"></span>
+      <span class="stat" id="mistakes"></span>
+      <span class="stat" id="hints"></span>
+    </div>
+  </section>
+
+  <p class="hint-line">Arraste cada objeto até o lugar certo, ou toque nele e depois na categoria. Precisa de ajuda? Clique no Biscoito. No teclado, as teclas 1–5 guardam o objeto selecionado.</p>
+
+  <main class="board" id="board">
+    <section class="panel pile" aria-label="Bagunça">
+      <div class="pile-head">
+        <div><h3>🌀 Bagunça</h3><small id="pileCount"></small></div>
+        <button class="btn ghost" id="reshuffle" type="button">🔀 Nova bagunça</button>
+      </div>
+      <div id="items"></div>
+    </section>
+    <section class="zones" id="zones" aria-label="Lugares"></section>
+  </main>
+</div>
+
+<div class="companion">
+  <div class="bubble" id="bubble" role="status" aria-live="polite"><small id="bubbleTag"></small><span id="bubbleText"></span></div>
+  <button class="cat" id="cat" type="button" aria-label="Biscoito, o gato. Clique para pedir uma dica.">
+    <svg viewBox="0 0 120 112" aria-hidden="true">
+      <path class="tail" d="M86 96 C112 96 114 66 100 58" fill="none" stroke="var(--cat)" stroke-width="9" stroke-linecap="round"/>
+      <ellipse cx="60" cy="84" rx="31" ry="24" fill="var(--cat)"/>
+      <ellipse cx="60" cy="90" rx="16" ry="14" fill="var(--cat-belly)"/>
+      <ellipse cx="47" cy="106" rx="9" ry="5" fill="var(--cat)"/>
+      <ellipse cx="73" cy="106" rx="9" ry="5" fill="var(--cat)"/>
+      <g class="head">
+        <path d="M37 40 L39 13 L58 29 Z" fill="var(--cat)" stroke="var(--cat)" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M83 40 L81 13 L62 29 Z" fill="var(--cat)" stroke="var(--cat)" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M42 33 L43 21 L52 29Z" fill="var(--cat-ear)"/>
+        <path d="M78 33 L77 21 L68 29Z" fill="var(--cat-ear)"/>
+        <circle cx="60" cy="48" r="26" fill="var(--cat)"/>
+        <path d="M60 23 v8 M52 25 l2 7 M68 25 l-2 7" stroke="var(--cat-dark)" stroke-width="3" stroke-linecap="round"/>
+        <g class="eyes" fill="var(--cat-eye)"><ellipse cx="50" cy="48" rx="3.4" ry="4.4"/><ellipse cx="70" cy="48" rx="3.4" ry="4.4"/></g>
+        <g class="happy-eyes" fill="none" stroke="var(--cat-eye)" stroke-width="2.6" stroke-linecap="round"><path d="M45.5 49 q4.5 -5 9 0"/><path d="M65.5 49 q4.5 -5 9 0"/></g>
+        <ellipse cx="43" cy="56" rx="4" ry="2.5" fill="var(--cat-ear)" opacity=".7"/>
+        <ellipse cx="77" cy="56" rx="4" ry="2.5" fill="var(--cat-ear)" opacity=".7"/>
+        <path d="M57.5 54.5 h5 l-2.5 3 z" fill="var(--cat-nose)"/>
+        <path d="M60 57.5 q-2.5 3.5 -6 1.5 M60 57.5 q2.5 3.5 6 1.5" fill="none" stroke="var(--cat-eye)" stroke-width="1.6" stroke-linecap="round"/>
+        <g stroke="var(--cat-dark)" stroke-width="1.3" stroke-linecap="round" opacity=".8"><path d="M37 54 l-12 -2 M37 58 l-12 2"/><path d="M83 54 l12 -2 M83 58 l12 2"/></g>
+      </g>
+    </svg>
+  </button>
+</div>
+
+<dialog id="endDlg"></dialog>
+<dialog id="albumDlg"></dialog>
+
+<script>
+const CATS = {
+  livro:  {label:"Estante",          icon:"📚", tint:"#b5835a", prep:"na"},
+  cozinha:{label:"Cozinha",          icon:"🍳", tint:"#e0a33c", prep:"na"},
+  lazer:  {label:"Lazer",            icon:"🎮", tint:"#7a9cc6", prep:"no"},
+  roupa:  {label:"Guarda-roupa",     icon:"👕", tint:"#c27ba0", prep:"no"},
+  gato:   {label:"Cantinho do gato", icon:"🐾", tint:"#6fa77c", prep:"no"},
+};
+
+// A ordem importa: o índice é usado para salvar o álbum.
+const POOL = [
+  {e:"📖", n:"Romance",            t:"livro",   m:"O romance que a vovó lia em voz alta nas noites de chuva."},
+  {e:"📚", n:"Enciclopédia",       t:"livro",   m:"Volume B, sempre aberto na página dos bichos."},
+  {e:"📔", n:"Diário",             t:"livro",   m:"Guardando segredos desde o verão de 2009."},
+  {e:"🗺️", n:"Atlas",              t:"livro",   m:"Os lugares que a gente prometeu visitar juntos."},
+  {e:"📒", n:"Caderno de poemas",  t:"livro",   m:"Rabiscos que eu nunca mostrei para ninguém."},
+  {e:"🍴", n:"Garfo",              t:"cozinha", m:"Do faqueiro bom, que só sai da gaveta no Natal."},
+  {e:"🥣", n:"Tigela",             t:"cozinha", m:"A tigela do cereal de domingo, assistindo desenho."},
+  {e:"☕", n:"Caneca",             t:"cozinha", m:"Lascada na borda. Ninguém tem coragem de jogar fora."},
+  {e:"🫖", n:"Bule",               t:"cozinha", m:"Chá de camomila para as conversas que vão até tarde."},
+  {e:"🥄", n:"Colher de pau",      t:"cozinha", m:"Já mexeu uns mil brigadeiros. Talvez mais."},
+  {e:"🎮", n:"Controle",           t:"lazer",   m:"Fase 7: o chefão que vencemos às três da manhã."},
+  {e:"🧩", n:"Quebra-cabeça",      t:"lazer",   m:"Mil peças. Falta uma. Sempre faltou."},
+  {e:"🎲", n:"Dado",               t:"lazer",   m:"Do jogo de tabuleiro das férias na praia."},
+  {e:"🪀", n:"Ioiô",               t:"lazer",   m:"O truque que eu nunca consegui aprender."},
+  {e:"🃏", n:"Baralho",            t:"lazer",   m:"Truco com o vovô, valendo amendoim."},
+  {e:"🧣", n:"Cachecol",           t:"roupa",   m:"Tricotado à mão, meio torto, perfeito."},
+  {e:"🧦", n:"Meias",              t:"roupa",   m:"O par favorito. Cada pé de uma cor."},
+  {e:"🧥", n:"Casaco",             t:"roupa",   m:"Ainda tem um ingresso de cinema esquecido no bolso."},
+  {e:"👒", n:"Chapéu",             t:"roupa",   m:"Do piquenique em que choveu e ninguém ligou."},
+  {e:"🧤", n:"Luvas",              t:"roupa",   m:"O Biscoito já roubou uma delas duas vezes."},
+  {e:"🧶", n:"Novelo",             t:"gato",    m:"Ele desenrola, eu enrolo de novo. Ciclo eterno."},
+  {e:"🐟", n:"Peixinho de pelúcia",t:"gato",    m:"O brinquedo favorito, já meio careca de tanto amor."},
+  {e:"🪶", n:"Varinha de pena",    t:"gato",    m:"Ele finge que não liga, mas sempre pula."},
+  {e:"📦", n:"Caixa",              t:"gato",    m:"A caminha nova custou caro. Ele prefere a caixa."},
+  {e:"🔔", n:"Guizo",              t:"gato",    m:"O guizo que denuncia os assaltos à cozinha."},
+];
+POOL.forEach((p,i)=>p.id=i);
+
+const ROUNDS = [
+  {name:"A Sala",      icon:"🛋️", cats:["livro","cozinha","lazer"],                per:2, intro:"Miau! Que bagunça na sala… me ajuda a arrumar?"},
+  {name:"O Quarto",    icon:"🛏️", cats:["livro","roupa","lazer","gato"],           per:2, intro:"O quarto também?! Juro que não fui eu. 🐾"},
+  {name:"A Casa Toda", icon:"🏡", cats:["livro","cozinha","lazer","roupa","gato"], per:3, intro:"A casa inteira! Eu supervisiono daqui de baixo."},
+];
+
+const WRONG = [
+  c=>`Hmm… acho que o lugar disso não é ${c.prep} ${c.label}.`,
+  c=>`${c.prep==="na"?"Na":"No"} ${c.label}? Miau… tem certeza?`,
+  c=>`Isso aí ${c.prep} ${c.label}? Até eu sei que não. 😼`,
+];
+const IDLE = [
+  "Prrr… escolha um objeto e me clique para ganhar uma dica.",
+  "Estou supervisionando. É um trabalho muito importante.",
+  "Se algo cair da estante, não fui eu.",
+  "Uma soneca agora cairia bem…",
+];
+
+const $ = s=>document.querySelector(s);
+const pick = a=>a[Math.floor(Math.random()*a.length)];
+const shuffle = a=>{ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const plural = (n,one,many)=>`${n} ${n===1?one:many}`;
+const fmt = s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const K = {best:"cozy.best", found:"cozy.found", mute:"cozy.mute"};
+// Cache em memória: o progresso vale para a sessão mesmo sem localStorage.
+const store = {
+  mem:{},
+  get(k,d){
+    if(k in this.mem) return this.mem[k];
+    try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch{ return d; }
+  },
+  set(k,v){ this.mem[k]=v; try{ localStorage.setItem(k,JSON.stringify(v)); }catch{} },
+};
+
+const boardEl=$("#board"), itemsEl=$("#items"), zonesEl=$("#zones"), catBtn=$("#cat");
+const bubble=$("#bubble"), bubbleTag=$("#bubbleTag"), bubbleText=$("#bubbleText");
+const endDlg=$("#endDlg"), albumDlg=$("#albumDlg");
+
+const S = {round:0, total:0, placed:0, moves:0, mistakes:0, hints:0, t0:0, tEnd:0, tick:null, selected:null, found:[]};
+
+/* ---------- som ---------- */
+let actx=null, muted=store.get(K.mute,false);
+function tone(f, d=.12, type="sine", when=0, vol=.08, glideTo){
+  if(muted) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const t=actx.currentTime+when, o=actx.createOscillator(), g=actx.createGain();
+    o.type=type; o.frequency.setValueAtTime(f,t);
+    if(glideTo) o.frequency.exponentialRampToValueAtTime(glideTo,t+d);
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.015); g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t+d+.02);
+  }catch{}
+}
+const sfx = {
+  pick:()=>tone(520,.07,"triangle",0,.05),
+  ok:  ()=>{ tone(660,.12,"triangle"); tone(880,.18,"triangle",.08); },
+  bad: ()=>{ tone(230,.18,"sine",0,.07); tone(196,.22,"sine",.1,.06); },
+  meow:()=>{ tone(620,.12,"triangle",0,.05,840); tone(840,.32,"triangle",.11,.05,420); },
+  win: ()=>[523,659,784,1047].forEach((f,i)=>tone(f,.3,"triangle",i*.11)),
+};
+function renderSound(){
+  const b=$("#soundBtn");
+  b.innerHTML = muted ? `🔇 <span class="label">Mudo</span>` : `🔊 <span class="label">Som</span>`;
+  b.setAttribute("aria-pressed", String(!muted));
+  b.setAttribute("aria-label", muted?"Ligar som":"Desligar som");
+}
+$("#soundBtn").addEventListener("click",()=>{ muted=!muted; store.set(K.mute,muted); renderSound(); sfx.pick(); });
+
+/* ---------- gato ---------- */
+let moodTimer, quietTimer;
+function flash(el,cls){
+  el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
+  el.addEventListener("animationend",()=>el.classList.remove(cls),{once:true});
+}
+function say(text, tag="", mood=""){
+  bubbleTag.textContent=tag; bubbleTag.hidden=!tag; bubbleText.textContent=text;
+  bubble.classList.remove("quiet"); flash(bubble,"pop");
+  clearTimeout(quietTimer); quietTimer=setTimeout(()=>bubble.classList.add("quiet"), 7000);
+  catBtn.classList.remove("happy","confused"); void catBtn.offsetWidth;
+  if(mood){ catBtn.classList.add(mood); clearTimeout(moodTimer); moodTimer=setTimeout(()=>catBtn.classList.remove(mood),1600); }
+}
+catBtn.addEventListener("click",()=>{
+  sfx.meow();
+  if(!S.selected){ say(pick(IDLE),"Biscoito","happy"); return; }
+  const p=POOL[+S.selected.dataset.id], c=CATS[p.t];
+  const z=zonesEl.querySelector(`.zone[data-type="${p.t}"]`);
+  startClock(); S.hints++; renderHud();
+  z.classList.add("hint"); setTimeout(()=>z.classList.remove("hint"),1500);
+  say(`Psiu… tenta ${c.prep} ${c.label}. 😺`,"Dica","happy");
+});
+
+/* ---------- rodada ---------- */
+function startRound(i){
+  document.querySelectorAll("dialog[open]").forEach(d=>d.close());
+  clearInterval(S.tick);
+  const r=ROUNDS[i];
+  Object.assign(S,{round:i, placed:0, moves:0, mistakes:0, hints:0, t0:0, tEnd:0, tick:null, selected:null, found:[]});
+  const chosen=r.cats.flatMap(t=>shuffle(POOL.filter(p=>p.t===t)).slice(0,r.per));
+  S.total=chosen.length;
+  boardEl.classList.remove("awaiting");
+  renderZones(r); renderPile(shuffle(chosen)); renderHud(); renderRooms();
+  say(r.intro,"Biscoito");
+}
+
+function startClock(){
+  if(S.t0) return;
+  S.t0=Date.now(); S.tick=setInterval(renderHud,1000);
+}
+const elapsed = ()=>S.t0 ? Math.floor(((S.tEnd||Date.now())-S.t0)/1000) : 0;
+
+function renderRooms(){
+  const best=store.get(K.best,{}), nav=$("#rooms");
+  nav.innerHTML="";
+  ROUNDS.forEach((r,i)=>{
+    const unlocked=i===0 || !!best[i-1];
+    const s=best[i]?.stars||0;
+    const b=document.createElement("button");
+    b.type="button"; b.className="room"+(i===S.round?" current":""); b.disabled=!unlocked;
+    if(i===S.round) b.setAttribute("aria-current","true");
+    b.innerHTML=`<span>${unlocked?r.icon:"🔒"} ${r.name}</span><span class="stars" aria-label="${s} de 3 estrelas">${"★".repeat(s)}${"☆".repeat(3-s)}</span>`;
+    if(!unlocked) b.title="Arrume o cômodo anterior para liberar";
+    b.addEventListener("click",()=>startRound(i));
+    nav.append(b);
+  });
+}
+
+function renderHud(){
+  const r=ROUNDS[S.round], prog=$("#progress");
+  $("#roomName").textContent=`${r.icon} ${r.name}`;
+  $("#bar").style.width=(S.total?S.placed/S.total*100:0)+"%";
+  prog.setAttribute("aria-valuemax",S.total); prog.setAttribute("aria-valuenow",S.placed);
+  $("#time").textContent="⏱ "+fmt(elapsed());
+  $("#moves").textContent="✋ "+plural(S.moves,"jogada","jogadas");
+  $("#mistakes").textContent="✗ "+plural(S.mistakes,"tropeço","tropeços");
+  $("#hints").textContent="💡 "+plural(S.hints,"dica","dicas");
+}
+
+function renderZones(r){
+  zonesEl.innerHTML="";
+  r.cats.forEach((t,idx)=>{
+    const c=CATS[t], z=document.createElement("div");
+    z.className="zone"; z.dataset.type=t; z.tabIndex=0;
+    z.setAttribute("role","button"); z.setAttribute("aria-label",`${c.label} (tecla ${idx+1})`);
+    z.style.setProperty("--tint",c.tint);
+    z.innerHTML=`<div class="zone-head"><span class="ic" aria-hidden="true">${c.icon}</span><span>${c.label}</span><span class="count">0/${r.per}</span></div><div class="zone-drop"></div>`;
+    const act=()=>S.selected ? tryPlace(S.selected,z) : say("Primeiro escolha um objeto da bagunça. 🐾");
+    z.addEventListener("click",act);
+    z.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); act(); } });
+    zonesEl.append(z);
+  });
+}
+
+function renderPile(list){
+  itemsEl.innerHTML="";
+  list.forEach(p=>{
+    const b=document.createElement("button");
+    b.type="button"; b.className="item"; b.dataset.id=p.id;
+    b.setAttribute("aria-pressed","false"); b.setAttribute("aria-label",p.n);
+    b.innerHTML=`<span class="em" aria-hidden="true">${p.e}</span><span>${p.n}</span>`;
+    b.addEventListener("pointerdown",onDown);
+    b.addEventListener("pointermove",onMove);
+    b.addEventListener("pointerup",e=>{ if(drag&&e.pointerId===drag.id) endDrag(true); });
+    b.addEventListener("pointercancel",e=>{ if(drag&&e.pointerId===drag.id) endDrag(false); });
+    b.addEventListener("click",e=>{ if(suppressClick){ suppressClick=false; return; } toggleSelect(e.currentTarget); });
+    itemsEl.append(b);
+  });
+  updatePile();
+}
+
+function updatePile(){
+  const left=itemsEl.querySelectorAll(".item").length;
+  $("#pileCount").textContent = left ? `${plural(left,"objeto","objetos")} fora do lugar` : "tudo guardado";
+  if(!left && !itemsEl.querySelector(".empty")) itemsEl.innerHTML=`<div class="empty">✨ Nada fora do lugar.<br>A casa está em paz.</div>`;
+}
+
+function updateZone(zone){
+  const n=zone.querySelectorAll(".chip").length, per=ROUNDS[S.round].per;
+  zone.querySelector(".count").textContent=(n===per?"✓ ":"")+`${n}/${per}`;
+  zone.classList.toggle("full",n===per);
+}
+
+/* ---------- seleção ---------- */
+function select(el){
+  deselect(); startClock();
+  S.selected=el; el.classList.add("selected"); el.setAttribute("aria-pressed","true");
+  boardEl.classList.add("awaiting"); sfx.pick();
+}
+function deselect(){
+  if(!S.selected) return;
+  S.selected.classList.remove("selected"); S.selected.setAttribute("aria-pressed","false");
+  S.selected=null; boardEl.classList.remove("awaiting");
+}
+const toggleSelect = el=>S.selected===el ? deselect() : select(el);
+
+/* ---------- arrastar (mouse + toque) ---------- */
+let drag=null, suppressClick=false;
+function onDown(e){
+  if(e.button!==0) return;
+  suppressClick=false;
+  const el=e.currentTarget, r=el.getBoundingClientRect();
+  drag={el, id:e.pointerId, x0:e.clientX, y0:e.clientY, ox:e.clientX-r.left, oy:e.clientY-r.top, w:r.width, started:false, ghost:null, over:null};
+  el.setPointerCapture(e.pointerId);
+}
+function onMove(e){
+  if(!drag||e.pointerId!==drag.id) return;
+  if(!drag.started){
+    if(Math.hypot(e.clientX-drag.x0,e.clientY-drag.y0)<6) return;
+    drag.started=true; deselect(); startClock(); sfx.pick();
+    const g=drag.el.cloneNode(true);
+    g.classList.add("drag-ghost"); g.style.width=drag.w+"px"; g.setAttribute("aria-hidden","true");
+    document.body.append(g); drag.ghost=g;
+    drag.el.classList.add("lifting");
+  }
+  drag.ghost.style.left=(e.clientX-drag.ox)+"px";
+  drag.ghost.style.top=(e.clientY-drag.oy)+"px";
+  const z=document.elementFromPoint(e.clientX,e.clientY)?.closest(".zone")||null;
+  if(z!==drag.over){ drag.over?.classList.remove("over"); z?.classList.add("over"); drag.over=z; }
+  if(e.clientY<70) scrollBy(0,-14); else if(innerHeight-e.clientY<70) scrollBy(0,14);
+}
+function endDrag(drop){
+  const {el,started,ghost,over}=drag; drag=null;
+  if(!started) return;
+  suppressClick=true;
+  ghost.remove(); el.classList.remove("lifting"); over?.classList.remove("over");
+  if(drop && over) tryPlace(el,over);
+}
+
+/* ---------- guardar ---------- */
+function tryPlace(el, zone){
+  const p=POOL[+el.dataset.id], c=CATS[zone.dataset.type];
+  startClock(); S.moves++; deselect();
+  if(p.t!==zone.dataset.type){
+    S.mistakes++; renderHud();
+    flash(el,"shake"); flash(zone,"bad"); sfx.bad();
+    say(pick(WRONG)(c),"","confused");
+    return;
+  }
+  S.placed++; S.found.push(p);
+  const isNew=unlock(p.id);
+  const chip=document.createElement("span");
+  chip.className="chip"; chip.title=p.m;
+  chip.innerHTML=`<span aria-hidden="true">${p.e}</span>${p.n}`;
+  chip.addEventListener("click",ev=>{ ev.stopPropagation(); say(p.m,`Memória · ${p.e} ${p.n}`); });
+  zone.querySelector(".zone-drop").append(chip);
+  el.remove();
+  updateZone(zone); updatePile(); renderHud(); sfx.ok();
+  say(p.m, `${isNew?"✨ Nova memória":"Memória"} · ${p.e} ${p.n}`, "happy");
+  if(S.placed===S.total) finishRound();
+}
+
+function finishRound(){
+  S.tEnd=Date.now(); clearInterval(S.tick); renderHud();
+  const secs=elapsed(), slips=S.mistakes+S.hints;
+  const stars = slips===0 ? 3 : slips<=2 ? 2 : 1;
+  const best=store.get(K.best,{}), prev=best[S.round];
+  const newRecord = !!prev && secs<prev.time;
+  best[S.round]={stars:Math.max(stars,prev?.stars||0), time:prev?Math.min(secs,prev.time):secs};
+  store.set(K.best,best);
+  renderRooms();
+  setTimeout(()=>{ sfx.win(); say("Tudo no lugar! Agora posso cochilar em paz. 💤","Biscoito","happy"); showEnd(stars,secs,newRecord); }, 650);
+}
+
+function showEnd(stars, secs, newRecord){
+  const last=S.round===ROUNDS.length-1;
+  const msg = stars===3 ? "Sem nenhum tropeço. O Biscoito está impressionado." : stars===2 ? "Quase perfeito! Só uns tropecinhos." : "Arrumado é arrumado. 🐾";
+  endDlg.innerHTML=`<div class="dlg end">
+    <div class="big-stars" role="img" aria-label="${stars} de 3 estrelas">${"★".repeat(stars)}<span class="dim">${"★".repeat(3-stars)}</span></div>
+    <h2>${last?"A casa inteira está em paz":"Cômodo arrumado!"}</h2>
+    <p class="muted">${msg}</p>
+    <div class="summary">
+      <span class="stat">⏱ ${fmt(secs)}</span>
+      <span class="stat">✋ ${plural(S.moves,"jogada","jogadas")}</span>
+      <span class="stat">✗ ${plural(S.mistakes,"tropeço","tropeços")}</span>
+      <span class="stat">💡 ${plural(S.hints,"dica","dicas")}</span>
+    </div>
+    ${newRecord?`<p class="record">🏆 Novo recorde de tempo!</p>`:""}
+    <h3>Memórias deste cômodo</h3>
+    <ul class="mem-list">${S.found.map(p=>`<li><span class="em" aria-hidden="true">${p.e}</span><div><b>${p.n}</b><br>${p.m}</div></li>`).join("")}</ul>
+    <div class="dlg-actions">
+      <button class="btn" type="button" data-act="retry">🔀 Nova bagunça</button>
+      ${last
+        ? `<button class="btn" type="button" data-act="album">📔 Ver álbum</button><button class="btn primary" type="button" data-act="first" autofocus>Recomeçar do início</button>`
+        : `<button class="btn primary" type="button" data-act="next" autofocus>Próximo cômodo →</button>`}
+    </div>
+  </div>`;
+  endDlg.showModal();
+  confetti(endDlg);
+}
+endDlg.addEventListener("click",e=>{
+  const act=e.target.closest("[data-act]")?.dataset.act;
+  if(act==="retry") startRound(S.round);
+  if(act==="next")  startRound(S.round+1);
+  if(act==="first") startRound(0);
+  if(act==="album") openAlbum();
+});
+
+function confetti(host){
+  if(reduceMotion) return;
+  const bits=["✨","🌸","⭐","🍂","🐾","💛"];
+  for(let i=0;i<28;i++){
+    const s=document.createElement("span");
+    s.className="confetti"; s.textContent=pick(bits); s.setAttribute("aria-hidden","true");
+    s.style.left=Math.random()*100+"vw";
+    s.style.setProperty("--x",(Math.random()*160-80)+"px");
+    s.style.setProperty("--r",(Math.random()*720-360)+"deg");
+    s.style.setProperty("--d",(1.8+Math.random()*1.6)+"s");
+    s.style.animationDelay=Math.random()*.4+"s";
+    host.append(s); setTimeout(()=>s.remove(),4200);
+  }
+}
+
+/* ---------- álbum ---------- */
+function unlock(id){
+  const found=new Set(store.get(K.found,[]));
+  if(found.has(id)) return false;
+  found.add(id); store.set(K.found,[...found]); renderAlbumCount();
+  return true;
+}
+function renderAlbumCount(){ $("#albumCount").textContent=`${store.get(K.found,[]).length}/${POOL.length}`; }
+function openAlbum(){
+  const got=new Set(store.get(K.found,[]));
+  let html=`<div class="dlg album">
+    <div class="album-top"><h2>📔 Álbum de memórias</h2><button class="btn ghost" type="button" data-act="close" aria-label="Fechar">✕</button></div>
+    <p class="muted">${got.size} de ${POOL.length} memórias encontradas. Cada bagunça nova traz objetos diferentes.</p>`;
+  for(const [t,c] of Object.entries(CATS)){
+    html+=`<h3>${c.icon} ${c.label}</h3><div class="album-grid">`+
+      POOL.filter(p=>p.t===t).map(p=>got.has(p.id)
+        ? `<div class="mem" style="--tint:${c.tint}"><b>${p.e} ${p.n}</b>${p.m}</div>`
+        : `<div class="mem locked"><b>🔒 ???</b>Ainda escondida na bagunça.</div>`).join("")+
+      `</div>`;
+  }
+  albumDlg.innerHTML=html+`</div>`;
+  albumDlg.showModal();
+}
+albumDlg.addEventListener("click",e=>{ if(e.target===albumDlg || e.target.closest('[data-act="close"]')) albumDlg.close(); });
+$("#albumBtn").addEventListener("click",openAlbum);
+$("#reshuffle").addEventListener("click",()=>startRound(S.round));
+
+/* ---------- teclado ---------- */
+document.addEventListener("keydown",e=>{
+  if(document.querySelector("dialog[open]")) return;
+  if(e.key==="Escape") deselect();
+  const n=parseInt(e.key,10);
+  if(S.selected && n>=1 && zonesEl.children[n-1]) tryPlace(S.selected,zonesEl.children[n-1]);
+});
+
+renderSound(); renderAlbumCount(); startRound(0);
+</script>
+</body>
+</html>

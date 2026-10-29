@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spotify Clone</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='12' fill='%231ed760'/%3E%3Cpath d='M6 9.2c4-1.2 8.6-.9 12 1.1M6.6 12.6c3.3-.9 7-.6 9.9 1M7.2 15.8c2.6-.7 5.4-.4 7.7.8' stroke='%23000' stroke-width='1.8' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="tb-left">
+        <a class="logo" href="#/" aria-label="Início">
+          <svg viewBox="0 0 24 24" width="32" height="32" aria-hidden="true"><circle cx="12" cy="12" r="12" fill="#fff"/><path d="M6 9.2c4-1.2 8.6-.9 12 1.1M6.6 12.6c3.3-.9 7-.6 9.9 1M7.2 15.8c2.6-.7 5.4-.4 7.7.8" stroke="#000" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+        </a>
+        <button class="nav-arrow" data-action="back" aria-label="Voltar"><span data-ic="chevLeft"></span></button>
+        <button class="nav-arrow" data-action="fwd" aria-label="Avançar"><span data-ic="chevRight"></span></button>
+      </div>
+      <div class="tb-center">
+        <a class="home-btn" id="homeBtn" href="#/" aria-label="Início" title="Início"><span data-ic="home"></span></a>
+        <label class="search-box" id="searchBox">
+          <span data-ic="search"></span>
+          <input id="search" type="search" autocomplete="off" spellcheck="false" placeholder="O que você quer ouvir?">
+          <button class="search-clear" data-action="clear-search" aria-label="Limpar busca"><span data-ic="close"></span></button>
+          <span class="search-sep"></span>
+          <a class="search-browse" href="#/search" title="Navegar"><span data-ic="browse"></span></a>
+        </label>
+      </div>
+      <div class="tb-right">
+        <button class="pill white premium" data-action="premium">Explorar Premium</button>
+        <button class="icon-btn" data-action="bell" title="Novidades"><span data-ic="bell"></span></button>
+        <button class="avatar" data-action="profile" title="Você">V</button>
+      </div>
+    </header>
+
+    <aside class="panel library" id="library" aria-label="Sua Biblioteca"></aside>
+
+    <main class="panel main" id="main">
+      <div class="main-scroll" id="mainScroll">
+        <div class="sticky-head" id="stickyHead" hidden></div>
+        <div id="view"></div>
+        <footer class="site-footer">
+          <div class="footer-cols">
+            <div><h4>Empresa</h4><a>Sobre</a><a>Empregos</a><a>For the Record</a></div>
+            <div><h4>Comunidades</h4><a>Para Artistas</a><a>Desenvolvedores</a><a>Publicidade</a></div>
+            <div><h4>Links úteis</h4><a>Suporte</a><a>Aplicativo móvel grátis</a></div>
+          </div>
+          <hr>
+          <p>Projeto de estudo: recriação da interface do Spotify. Músicas, artistas e capas são gerados no navegador.</p>
+        </footer>
+      </div>
+    </main>
+
+    <aside class="panel right" id="rightPanel" aria-label="Tocando agora"></aside>
+
+    <footer class="player" id="player">
+      <div class="np">
+        <a class="np-cover" id="npCover" href="#/"></a>
+        <div class="np-meta">
+          <a class="np-title" id="npTitle" href="#/"></a>
+          <div class="np-artist" id="npArtist"></div>
+        </div>
+        <button class="icon-btn np-like" id="npLike"></button>
+      </div>
+      <div class="controls">
+        <div class="ctrl-btns">
+          <button class="icon-btn" id="btnShuffle" data-action="shuffle" title="Ativar ordem aleatória"><span data-ic="shuffle"></span></button>
+          <button class="icon-btn" data-action="prev" title="Voltar"><span data-ic="prev"></span></button>
+          <button class="play-main" id="btnPlay" data-action="play" title="Tocar"></button>
+          <button class="icon-btn" data-action="next" title="Avançar"><span data-ic="next"></span></button>
+          <button class="icon-btn" id="btnRepeat" data-action="repeat" title="Ativar repetição"><span data-ic="repeat"></span></button>
+        </div>
+        <div class="progress-row">
+          <span class="time" id="tCur">0:00</span>
+          <div class="slider" id="seek" role="slider" aria-label="Progresso"><div class="rail"><div class="fill"></div></div><div class="knob"></div></div>
+          <span class="time" id="tDur">0:00</span>
+        </div>
+      </div>
+      <div class="extras">
+        <button class="icon-btn" id="btnRight" data-action="toggle-right" title="Tela Tocando agora"><span data-ic="nowPlaying"></span></button>
+        <button class="icon-btn" id="btnQueue" data-action="queue" title="Fila"><span data-ic="queue"></span></button>
+        <button class="icon-btn" id="btnMute" data-action="mute" title="Sem som"></button>
+        <div class="slider vol" id="vol" role="slider" aria-label="Volume"><div class="rail"><div class="fill"></div></div><div class="knob"></div></div>
+      </div>
+    </footer>
+
+    <nav class="mobile-nav">
+      <a href="#/" data-nav="home"><span data-ic="home"></span>Início</a>
+      <a href="#/search" data-nav="search"><span data-ic="search"></span>Buscar</a>
+      <a href="#/library" data-nav="library"><span data-ic="library"></span>Sua Biblioteca</a>
+    </nav>
+  </div>
+
+  <div class="ctxmenu" id="ctxmenu" hidden></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="modal" id="modal" hidden></div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/synth.js"></script>
+  <script src="js/art.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

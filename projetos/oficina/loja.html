@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loja AutoForce | Peças e acessórios com instalação</title>
+  <meta name="description" content="Óleos, filtros, freios, suspensão e acessórios com instalação na oficina. Retire em 2h ou receba em casa.">
+  <meta name="theme-color" content="#f1f1ef">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+  <header class="bar">
+    <div class="wrap bar-in">
+      <a href="index.html" class="wordmark" aria-label="AutoForce, início">AUTO<span>FORCE</span></a>
+      <nav aria-label="Principal">
+        <a href="index.html#servicos">Serviços</a>
+        <a href="index.html#sobre">Sobre</a>
+        <a href="loja.html" aria-current="page">Loja</a>
+        <a href="index.html#contato">Contato</a>
+      </nav>
+      <div class="bar-actions">
+        <button class="cart-btn" data-open-cart aria-label="Abrir carrinho" data-i="cart"><span class="cart-count"></span></button>
+        <a class="btn btn-sm btn-accent" data-wa="Olá! Quero agendar um serviço na AutoForce.">Agendar</a>
+        <button class="menu-toggle" aria-label="Menu" aria-expanded="false" data-i="menu"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="wrap shop-top" aria-labelledby="titulo">
+      <h1 id="titulo" class="rise">Loja AutoForce</h1>
+      <p class="lede rise" style="--d:1">Peças com instalação na oficina. Retire em 2h ou receba em casa, com frete grátis acima de R$ 299.</p>
+    </section>
+
+    <div class="wrap shop-tools">
+      <div class="cats" id="cats" role="group" aria-label="Categorias"></div>
+      <label class="search"><span class="hidden">Buscar</span><span data-i="search"></span><input id="q" type="search" aria-label="Buscar peça" placeholder="Buscar peça" autocomplete="off"></label>
+      <select class="sort" id="sort" aria-label="Ordenar">
+        <option value="pop">Mais vendidos</option>
+        <option value="asc">Menor preço</option>
+        <option value="desc">Maior preço</option>
+        <option value="off">Maior desconto</option>
+      </select>
+    </div>
+
+    <section class="wrap shop-grid" aria-label="Produtos">
+      <div class="shop-meta">
+        <p class="note" id="count" aria-live="polite"></p>
+        <label class="note" style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="onlySale" style="accent-color:var(--accent);width:18px;height:18px"> Só promoções</label>
+      </div>
+      <div class="products" id="grid"></div>
+    </section>
+
+    <section class="section on-field" aria-labelledby="t-orc">
+      <div class="wrap quote">
+        <h2 id="t-orc">Não achou a peça?</h2>
+        <div style="display:flex;flex-direction:column;gap:24px;align-items:flex-start">
+          <p class="muted" style="max-width:36ch">Mande o modelo do carro e a peça. Respondemos com preço e prazo no mesmo dia.</p>
+          <a class="btn btn-accent" data-wa="Olá! Procuro uma peça que não achei na loja. Meu carro é:">Pedir orçamento <span class="arrow" data-i="arrow"></span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" style="padding-top:var(--m)">
+    <div class="wrap">
+      <p class="footer-name" aria-hidden="true" style="margin-top:24px">AUTO<span>FORCE</span></p>
+      <div class="footer-bottom">
+        <span>© 2026 AutoForce Mecânica · Av. Brasil, 1500, São Paulo · (11) 99999-8888</span>
+        <a href="index.html">Voltar para a oficina</a>
+      </div>
+    </div>
+  </footer>
+
+  <a class="wa-float" data-wa aria-label="Falar no WhatsApp" data-i="chat"></a>
+
+  <script src="js/common.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const $ = (id) => document.getElementById(id);
+      const state = { q: "", cat: "all", sale: false, sort: "pop" };
+      const urlCat = new URLSearchParams(location.search).get("cat");
+      if (CATEGORIES.some((c) => c.id === urlCat)) state.cat = urlCat;
+
+      function renderCats() {
+        const all = [{ id: "all", name: "Tudo" }, ...CATEGORIES];
+        $("cats").innerHTML = all.map((c) => {
+          const n = c.id === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.cat === c.id).length;
+          return `<button type="button" data-cat="${c.id}" aria-pressed="${state.cat === c.id}">${c.name}<span class="n">${n}</span></button>`;
+        }).join("");
+        $("cats").querySelectorAll("[data-cat]").forEach((b) => b.addEventListener("click", () => {
+          state.cat = b.dataset.cat;
+          const url = new URL(location);
+          state.cat === "all" ? url.searchParams.delete("cat") : url.searchParams.set("cat", state.cat);
+          history.replaceState(null, "", url);
+          renderCats();
+          render();
+        }));
+      }
+
+      const norm = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+      const sorters = {
+        pop: (a, b) => b.sold - a.sold,
+        asc: (a, b) => a.price - b.price,
+        desc: (a, b) => b.price - a.price,
+        off: (a, b) => discount(b) - discount(a),
+      };
+
+      function render() {
+        const q = norm(state.q.trim());
+        const list = PRODUCTS.filter((p) =>
+          (state.cat === "all" || p.cat === state.cat) &&
+          (!state.sale || p.old) &&
+          (!q || norm(p.name + " " + p.desc + " " + catName(p.cat)).includes(q))).sort(sorters[state.sort]);
+
+        $("count").textContent = `${list.length} ${list.length === 1 ? "produto" : "produtos"}`;
+        $("grid").innerHTML = list.length ? list.map(productCard).join("") :
+          `<div class="empty"><p>Nada encontrado com esses filtros.</p><button class="btn" id="resetAll">Limpar filtros</button></div>`;
+        bindProductCards($("grid"));
+        $("grid").querySelectorAll(".product").forEach((el, i) => { el.classList.add("rise"); el.style.setProperty("--d", i % 4); });
+        observeRise($("grid"));
+        $("resetAll")?.addEventListener("click", () => {
+          Object.assign(state, { q: "", cat: "all", sale: false });
+          $("q").value = ""; $("onlySale").checked = false;
+          renderCats(); render();
+        });
+      }
+
+      $("q").addEventListener("input", (e) => { state.q = e.target.value; render(); });
+      $("sort").addEventListener("change", (e) => { state.sort = e.target.value; render(); });
+      $("onlySale").addEventListener("change", (e) => { state.sale = e.target.checked; render(); });
+      renderCats();
+      render();
+    });
+  </script>
+</body>
+</html>

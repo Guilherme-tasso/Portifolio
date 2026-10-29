@@ -1,0 +1,73 @@
+/* Tema do portfólio aplicado por cima dos jogos (Damas, Cozy Organizer e Astro Vanguarda):
+   mesma fonte, mesmo fundo cinza, tinta preta e o laranja de destaque do site.
+   Cada jogo marca o <body> com a sua classe: tema-damas, tema-cozy ou tema-nave. */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700;12..96,800&display=swap');
+
+/* Damas: o seletor repetido vence o tema claro e o escuro do jogo */
+:root:root:root:has(body.tema-damas) {
+    /* um tom abaixo do fundo do site, para o palco se destacar da página */
+    --paper: #dfded7;
+    --panel: #d3d2ca;
+    --ink: #141414;
+    --ink-soft: #4a4a46;
+    --line: #c6c5bd;
+    --brand: #141414;
+    --felt: #2a2a27;
+    --felt-lit: #3d3d39;
+    --frame: #141414;
+    --frame-hi: rgba(255, 255, 255, .06);
+    --frame-ink: #b9b8b1;
+    --stone: #d3d2ca;
+    --accent: #ff4f1a;
+    --accent-glow: rgba(255, 79, 26, .3);
+    --accent-ink: #b8360c;
+    --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+    --f-body: 'Bricolage Grotesque', system-ui, sans-serif;
+    --f-mono: 'Bricolage Grotesque', system-ui, sans-serif;
+    color-scheme: light;
+}
+
+/* Cozy Organizer: cartões claros sobre o cinza do site */
+:root:root:has(body.tema-cozy) {
+    --bg: #dfded7;
+    --dot: #d3d2ca;
+    --paper: #f7f6f2;
+    --ink: #141414;
+    --muted: #4a4a46;
+    --line: #d3d2ca;
+    --accent: #ff4f1a;
+    --accent-ink: #141414;
+    --radius: 6px;
+}
+
+/* Astro Vanguarda: painel claro como o site; a tela do jogo segue no espaço, numa moldura preta.
+   O HUD dentro da tela lê --f-display e --f-body, então também passa a usar a fonte do site. */
+:root:root:root:has(body.tema-nave) {
+    --paper: #dfded7;
+    --panel: #d3d2ca;
+    --ink: #141414;
+    --ink-soft: #4a4a46;
+    --line: #c6c5bd;
+    --brand: #141414;
+    --brand-lit: #2e2e2b;
+    --on-brand: #f4f3ee;
+    --frame: #141414;
+    --frame-hi: rgba(255, 255, 255, .06);
+    --accent: #ff4f1a;
+    --accent-glow: rgba(255, 79, 26, .3);
+    --accent-ink: #b8360c;
+    --gold: #8a5a00;
+    --good: #2f6b3a;
+    --danger: #c2361a;
+    --shadow: rgba(0, 0, 0, .28);
+    --f-display: 'Bricolage Grotesque', system-ui, sans-serif;
+    --f-body: 'Bricolage Grotesque', system-ui, sans-serif;
+    --f-mono: 'Bricolage Grotesque', system-ui, sans-serif;
+    color-scheme: light;
+}
+
+/* Cozy usa Nunito e Fredoka direto nas regras, então a troca precisa de !important */
+body.tema-cozy,
+body.tema-cozy *:not(svg):not(svg *) {
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif !important;
+}

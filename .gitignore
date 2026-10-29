@@ -1,2 +1,13 @@
-# Chave da API do Clima (não publicar). Veja projetos/clima/config.example.js
-projetos/clima/config.js
+# Arquivos locais que não fazem parte do site
+*.rar
+Guilherme/
+.claude/
+
+# Imagens antigas que o site não usa mais
+img/*
+!img/perfil.jpg
+
+# Projetos que saíram da página
+projetos/mercadozap/
+projetos/plataforma-negocios/
+projetos/clima/README.md

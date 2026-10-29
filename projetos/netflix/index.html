@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Netflix (clone)</title>
+  <meta name="description" content="Recriação da interface da Netflix em HTML, CSS e JavaScript puro. Projeto de estudo.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+  <!-- ===== Quem está assistindo? ===== -->
+  <section class="profiles" id="profiles" aria-label="Escolha de perfil">
+    <a class="logo profiles__logo" href="#" aria-label="Netflix">NETFLIX</a>
+    <h1 class="profiles__title" id="profilesTitle">Quem está assistindo?</h1>
+    <ul class="profiles__list" id="profilesList"></ul>
+    <button class="btn-outline" id="manageBtn">Gerenciar perfis</button>
+  </section>
+
+  <div class="app" id="app" hidden>
+
+    <!-- ===== Cabeçalho ===== -->
+    <header class="header" id="header">
+      <a class="logo" href="#" data-view="home" aria-label="Netflix, Início">NETFLIX</a>
+
+      <nav class="nav" aria-label="Principal">
+        <a href="#" data-view="home">Início</a>
+        <a href="#" data-view="serie">Séries</a>
+        <a href="#" data-view="filme">Filmes</a>
+        <a href="#" data-view="new">Bombando</a>
+        <a href="#" data-view="mylist">Minha lista</a>
+      </nav>
+
+      <div class="dropdown nav-mobile">
+        <button class="nav-mobile__btn" data-dropdown-toggle>Navegar <span data-icon="caret"></span></button>
+        <div class="dropdown__menu dropdown__menu--center">
+          <ul>
+            <li><a href="#" data-view="home">Início</a></li>
+            <li><a href="#" data-view="serie">Séries</a></li>
+            <li><a href="#" data-view="filme">Filmes</a></li>
+            <li><a href="#" data-view="new">Bombando</a></li>
+            <li><a href="#" data-view="mylist">Minha lista</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="header__right">
+        <div class="search" id="search">
+          <button class="icon-btn" id="searchToggle" aria-label="Buscar" data-icon="search"></button>
+          <input id="searchInput" type="text" placeholder="Títulos, gente e gêneros" autocomplete="off" aria-label="Buscar títulos">
+          <button class="icon-btn search__clear" id="searchClear" aria-label="Limpar busca" data-icon="close" hidden></button>
+        </div>
+
+        <a href="#" class="header__link" data-kids>Infantil</a>
+
+        <div class="dropdown notif">
+          <button class="icon-btn" aria-label="Notificações" data-dropdown-toggle data-icon="bell"><span class="badge" id="bellCount"></span></button>
+          <div class="dropdown__menu notif__menu">
+            <ul id="notifList"></ul>
+          </div>
+        </div>
+
+        <div class="dropdown account">
+          <button class="account__btn" aria-label="Conta e perfis" data-dropdown-toggle>
+            <span class="mini-avatar" id="headerAvatar"></span>
+            <span class="account__caret" data-icon="caret"></span>
+          </button>
+          <div class="dropdown__menu account__menu">
+            <ul id="profileMenuList" class="account__profiles"></ul>
+            <ul class="account__links">
+              <li><button data-manage><span data-icon="pencil"></span>Gerenciar perfis</button></li>
+              <li><button data-toast="Função de demonstração"><span data-icon="user"></span>Conta</button></li>
+              <li><button data-toast="Função de demonstração"><span data-icon="help"></span>Central de Ajuda</button></li>
+            </ul>
+            <button class="account__signout" data-signout>Sair da Netflix</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== Conteúdo ===== -->
+    <main class="main" id="main">
+      <div class="subhead" id="subhead" hidden>
+        <h1 id="subheadTitle">Séries</h1>
+        <select id="genreSelect" aria-label="Filtrar por gênero"></select>
+      </div>
+      <section class="hero" id="hero" aria-label="Destaque"></section>
+      <div class="rows" id="rows"></div>
+    </main>
+
+    <!-- ===== Rodapé ===== -->
+    <footer class="footer">
+      <div class="footer__social">
+        <a href="#" aria-label="Facebook" data-icon="facebook"></a>
+        <a href="#" aria-label="Instagram" data-icon="instagram"></a>
+        <a href="#" aria-label="X" data-icon="x"></a>
+        <a href="#" aria-label="YouTube" data-icon="youtube"></a>
+      </div>
+      <ul class="footer__links">
+        <li><a href="#">Audiodescrição</a></li>
+        <li><a href="#">Central de Ajuda</a></li>
+        <li><a href="#">Cartão pré-pago</a></li>
+        <li><a href="#">Imprensa</a></li>
+        <li><a href="#">Relações com investidores</a></li>
+        <li><a href="#">Carreiras</a></li>
+        <li><a href="#">Termos de Uso</a></li>
+        <li><a href="#">Privacidade</a></li>
+        <li><a href="#">Avisos legais</a></li>
+        <li><a href="#">Preferências de cookies</a></li>
+        <li><a href="#">Informações corporativas</a></li>
+        <li><a href="#">Entre em contato</a></li>
+      </ul>
+      <button class="footer__code" id="serviceCode">Código do serviço</button>
+      <p class="footer__copy">Projeto de estudo · recriação não oficial da interface da Netflix. Títulos e elencos são fictícios.</p>
+    </footer>
+  </div>
+
+  <!-- ===== Modal de detalhes ===== -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Detalhes do título">
+    <div class="modal__box" id="modalBox"></div>
+  </div>
+
+  <!-- ===== Player ===== -->
+  <div class="player" id="player" aria-hidden="true" tabindex="-1">
+    <div class="player__video" id="playerVideo"></div>
+    <div class="player__paused">
+      <small>Você está assistindo</small>
+      <h2 id="playerPausedTitle"></h2>
+      <p class="player__paused-sub" id="playerPausedSub"></p>
+      <p id="playerPausedDesc"></p>
+    </div>
+    <div class="player__ui">
+      <div class="player__top">
+        <button class="player__btn" data-player="close" aria-label="Voltar" data-icon="back"></button>
+        <span class="player__note">Reprodução simulada</span>
+      </div>
+      <div class="player__bottom">
+        <div class="player__timeline">
+          <div class="player__bar" id="playerBar">
+            <div class="player__fill" id="playerFill"></div>
+            <div class="player__knob" id="playerKnob"></div>
+          </div>
+          <span class="player__time" id="playerTime">0:00</span>
+        </div>
+        <div class="player__controls">
+          <button class="player__btn" data-player="toggle" id="playerToggle" aria-label="Reproduzir/pausar"></button>
+          <button class="player__btn" data-player="back10" aria-label="Voltar 10 segundos" data-icon="rewind"></button>
+          <button class="player__btn" data-player="fwd10" aria-label="Avançar 10 segundos" data-icon="forward"></button>
+          <button class="player__btn" data-player="mute" id="playerMute" aria-label="Volume" data-icon="volumeOn"></button>
+          <p class="player__title" id="playerTitle"></p>
+          <button class="player__btn" data-player="next" id="playerNext" aria-label="Próximo episódio" data-icon="next"></button>
+          <button class="player__btn player__btn--opt" data-player="subs" aria-label="Áudio e legendas" data-icon="subtitles"></button>
+          <button class="player__btn" data-player="fs" aria-label="Tela cheia" data-icon="fullscreen"></button>
+        </div>
+      </div>
+    </div>
+    <div class="player__loading"><span></span></div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

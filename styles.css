@@ -344,6 +344,10 @@ h3 {
     margin-top: 20px;
 }
 
+.palco-info .link-forte + .link-forte {
+    margin-left: 24px;
+}
+
 .js .info[hidden] {
     display: none;
 }

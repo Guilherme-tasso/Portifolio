@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AutoForce Mecânica | Oficina no Centro de São Paulo</title>
+  <meta name="description" content="Oficina mecânica no Centro de São Paulo desde 2009. Veja os preços, simule o orçamento e agende pelo WhatsApp.">
+  <meta name="theme-color" content="#f1f1ef">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+  <header class="bar">
+    <div class="wrap bar-in">
+      <a href="index.html" class="wordmark" aria-label="AutoForce, início">AUTO<span>FORCE</span></a>
+      <nav aria-label="Principal">
+        <a href="#servicos">Serviços</a>
+        <a href="#sobre">Sobre</a>
+        <a href="loja.html">Loja</a>
+        <a href="#contato">Contato</a>
+      </nav>
+      <div class="bar-actions">
+        <button class="cart-btn" data-open-cart aria-label="Abrir carrinho" data-i="cart"><span class="cart-count"></span></button>
+        <a class="btn btn-sm btn-accent" data-wa="Olá! Quero agendar um serviço na AutoForce.">Agendar</a>
+        <button class="menu-toggle" aria-label="Menu" aria-expanded="false" data-i="menu"></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="titulo">
+      <div class="hero-text">
+        <div>
+          <p class="status rise" data-status>Seg–sex 8h–18h · sáb 8h–13h</p>
+          <h1 id="titulo" class="rise" style="--d:1;margin-top:28px">Mecânica no Centro de SP</h1>
+          <p class="lede rise" style="--d:2">Diagnóstico, peças e mão de obra com garantia por escrito. Orçamento em 24h.</p>
+          <div class="hero-cta rise" style="--d:3">
+            <a class="btn btn-accent" data-wa="Olá! Quero agendar um serviço na AutoForce.">Agendar pelo WhatsApp <span class="arrow" data-i="arrow"></span></a>
+            <a class="btn btn-line" href="#servicos">Ver preços</a>
+          </div>
+        </div>
+        <dl class="hero-facts rise" style="--d:4">
+          <div><dt class="hidden">Experiência</dt><dd style="margin:0"><b>15 anos</b><span>no mesmo endereço</span></dd></div>
+          <div><dt class="hidden">Clientes</dt><dd style="margin:0"><b>5.000+</b><span>carros atendidos</span></dd></div>
+          <div><dt class="hidden">Orçamento</dt><dd style="margin:0"><b>24h</b><span>para o orçamento</span></dd></div>
+        </dl>
+      </div>
+      <figure class="hero-media" style="margin:0">
+        <img src="img/oficina-motor.jpg" alt="Mecânico trabalhando no motor de um carro na oficina" fetchpriority="high">
+        <figcaption><b>Av. Brasil, 1500, Centro</b>Seg–sex 8h–18h · sáb 8h–13h</figcaption>
+      </figure>
+    </section>
+
+    <section class="section wrap" id="servicos" aria-labelledby="t-servicos">
+      <div class="services-head">
+        <h2 id="t-servicos" class="rise">Serviços e preços</h2>
+        <p class="rise" style="--d:1">Escolha um serviço e o tamanho do carro para ver o valor. O preço final sai no diagnóstico, sem compromisso.</p>
+      </div>
+      <div class="services">
+        <ul class="price-list" id="priceList"></ul>
+        <aside class="estimator rise" aria-live="polite">
+          <h3 id="estName">Revisão completa</h3>
+          <p class="est-service" id="estDesc"></p>
+          <div class="seg" role="group" aria-label="Tamanho do carro">
+            <button type="button" data-size="0" aria-pressed="true">Hatch ou popular</button>
+            <button type="button" data-size="1" aria-pressed="false">Sedã ou SUV</button>
+          </div>
+          <div class="est-price"><small>a partir de</small><span id="estPrice">R$ 390</span></div>
+          <div class="est-meta">
+            <div><b id="estTime">3 h</b><span>na oficina</span></div>
+            <div><b>90 dias</b><span>de garantia</span></div>
+          </div>
+          <a class="btn btn-accent btn-block" id="estBook" href="#">Agendar este serviço <span class="arrow" data-i="arrow"></span></a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section wrap" id="sobre" aria-labelledby="t-sobre" style="padding-top:0">
+      <div class="about">
+        <figure class="about-photo rise" style="margin:0"><img src="img/capo-aberto.jpg" alt="Mecânico verificando o motor de um carro com o capô aberto" loading="lazy"></figure>
+        <div class="about-text">
+          <h2 id="t-sobre" class="rise">Desde 2009 na Av. Brasil</h2>
+          <p class="rise" style="--d:1">Mecânica de qualidade, preço justo e conversa direta. Você vê as peças trocadas e aprova cada serviço antes de começar.</p>
+          <ul class="facts rise" style="--d:2">
+            <li>Diagnóstico computadorizado</li>
+            <li>Peças originais ou com procedência</li>
+            <li>Orçamento detalhado</li>
+            <li>Garantia por escrito</li>
+          </ul>
+          <figure class="about-side rise" style="--d:3;margin:0"><img src="img/chave-motor.jpg" alt="Mãos com chave de boca apertando uma peça do motor" loading="lazy"></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section on-field" aria-labelledby="t-como">
+      <div class="wrap">
+        <div class="steps-head">
+          <h2 id="t-como" class="rise">Como funciona</h2>
+          <img class="rise" style="--d:1" src="img/mecanico.jpg" alt="Mecânico sorrindo ao lado de um carro amarelo com o capô aberto" loading="lazy">
+        </div>
+        <ol class="steps">
+          <li class="rise"><b>Agende</b><span>Pelo WhatsApp ou telefone, no horário que for melhor.</span></li>
+          <li class="rise" style="--d:1"><b>Diagnóstico</b><span>Avaliação completa e orçamento em até 24h.</span></li>
+          <li class="rise" style="--d:2"><b>Aprovação</b><span>Você aprova e recebe fotos durante o serviço.</span></li>
+          <li class="rise" style="--d:3"><b>Entrega</b><span>Carro testado, com garantia por escrito.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section wrap" aria-labelledby="t-loja">
+      <div class="shop-split">
+        <div class="shop-intro">
+          <h2 id="t-loja" class="rise">Peças com instalação</h2>
+          <p class="rise" style="--d:1">Compre online e retire em 2h ou receba em casa. Frete grátis acima de R$ 299.</p>
+          <div class="rise" style="--d:2"><a class="btn" href="loja.html">Ver a loja <span class="arrow" data-i="arrow"></span></a></div>
+          <img class="rise" style="--d:3" src="img/troca-oleo.jpg" alt="Óleo sendo colocado no motor durante uma troca" loading="lazy">
+        </div>
+        <div class="products shop-pick" id="teaserProducts"></div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="contato" aria-labelledby="t-contato" style="padding-top:0">
+      <div class="contact">
+        <div class="contact-info">
+          <h2 id="t-contato" class="rise">Venha até a oficina</h2>
+          <div class="contact-lines rise" style="--d:1">
+            <div><h3>Endereço</h3><p>Av. Brasil, 1500<br>Centro, São Paulo</p></div>
+            <div><h3>WhatsApp</h3><a data-wa>(11) 99999-8888</a></div>
+            <div><h3>Telefone</h3><a href="tel:+5511999998888">(11) 99999-8888</a></div>
+            <div><h3>E-mail</h3><a href="mailto:contato@autoforcemecanica.com.br">contato@autoforce<wbr>mecanica.com.br</a></div>
+          </div>
+          <div class="rise" style="--d:2">
+            <p class="status" data-status style="margin-bottom:12px">Horário</p>
+            <table class="hours" id="hours">
+              <tr data-days="1,2,3,4,5"><td>Segunda a sexta</td><td>8h às 18h</td></tr>
+              <tr data-days="6"><td>Sábado</td><td>8h às 13h</td></tr>
+              <tr data-days="0"><td>Domingo</td><td>Fechado</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="map rise">
+          <iframe title="Mapa da oficina AutoForce" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+            src="https://maps.google.com/maps?q=Avenida%20Paulista%2C%20S%C3%A3o%20Paulo&z=15&output=embed"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <p>Mecânica e peças no Centro de São Paulo desde 2009.</p>
+        <nav class="footer-links" aria-label="Rodapé">
+          <a href="#servicos">Serviços</a><a href="#sobre">Sobre</a><a href="loja.html">Loja</a><a href="#contato">Contato</a><a href="#" aria-label="Instagram">Instagram</a>
+        </nav>
+      </div>
+      <p class="footer-name" aria-hidden="true">AUTO<span>FORCE</span></p>
+      <div class="footer-bottom">
+        <span>© 2026 AutoForce Mecânica · CNPJ 00.000.000/0001-00</span>
+        <span>Fotos: <a href="https://unsplash.com" rel="noopener">Unsplash</a> (Licença Unsplash)</span>
+      </div>
+    </div>
+  </footer>
+
+  <a class="wa-float" data-wa aria-label="Falar no WhatsApp" data-i="chat"></a>
+
+  <script src="js/common.js"></script>
+  <script>
+    // Serviços com preço "a partir de" [hatch/popular, sedã/SUV], valores de exemplo
+    const SERVICES = [
+      { name: "Revisão completa", desc: "Check-up de 50 itens, troca de óleo e filtros.", price: [390, 520], time: "3 h" },
+      { name: "Troca de óleo e filtro", desc: "Óleo sintético e filtro novo, em 40 minutos.", price: [189, 249], time: "40 min" },
+      { name: "Freios", desc: "Pastilhas dianteiras, revisão de discos e fluido.", price: [280, 360], time: "1 h 30" },
+      { name: "Suspensão e direção", desc: "Amortecedores dianteiros e alinhamento.", price: [720, 980], time: "3 h" },
+      { name: "Motor", desc: "Troca de correia dentada, tensor e bomba d'água.", price: [650, 890], time: "4 h" },
+      { name: "Ar-condicionado", desc: "Higienização, carga de gás e filtro de cabine.", price: [250, 320], time: "1 h 30" },
+      { name: "Elétrica e diagnóstico", desc: "Leitura por scanner, bateria, alternador e partida.", price: [120, 120], time: "40 min" },
+    ];
+    const brl0 = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const est = { s: 0, size: 0 };
+      const list = document.getElementById("priceList");
+      list.innerHTML = SERVICES.map((s, i) => `
+        <li class="rise" style="--d:${i % 4}">
+          <button class="price-row" type="button" data-s="${i}" aria-pressed="${i === 0}">
+            <span class="pr-name">${s.name}</span>
+            <span class="pr-price">desde ${brl0(s.price[0])}</span>
+            <span class="pr-desc">${s.desc}</span>
+          </button>
+        </li>`).join("");
+
+      function renderEst() {
+        const s = SERVICES[est.s];
+        const size = ["hatch/popular", "sedã/SUV"][est.size];
+        document.getElementById("estName").textContent = s.name;
+        document.getElementById("estDesc").textContent = s.desc;
+        document.getElementById("estPrice").textContent = brl0(s.price[est.size]);
+        document.getElementById("estTime").textContent = s.time;
+        document.getElementById("estBook").href = waLink(`Olá! Quero agendar: ${s.name} (${size}), a partir de ${brl0(s.price[est.size])}.`);
+        document.getElementById("estBook").target = "_blank";
+        list.querySelectorAll("[data-s]").forEach((b) => b.setAttribute("aria-pressed", +b.dataset.s === est.s));
+        document.querySelectorAll("[data-size]").forEach((b) => b.setAttribute("aria-pressed", +b.dataset.size === est.size));
+      }
+      list.querySelectorAll("[data-s]").forEach((b) => b.addEventListener("click", () => {
+        est.s = +b.dataset.s;
+        renderEst();
+        if (innerWidth <= 900) document.querySelector(".estimator").scrollIntoView({ behavior: "smooth", block: "center" });
+      }));
+      document.querySelectorAll("[data-size]").forEach((b) => b.addEventListener("click", () => { est.size = +b.dataset.size; renderEst(); }));
+      renderEst();
+
+      const teaser = document.getElementById("teaserProducts");
+      teaser.innerHTML = [1, 5, 8, 12].map((id) => productCard(PRODUCTS.find((p) => p.id === id))).join("");
+      teaser.querySelectorAll(".product").forEach((el, i) => { el.classList.add("rise"); el.style.setProperty("--d", i); });
+      bindProductCards(teaser);
+
+      const today = new Date().getDay();
+      document.querySelectorAll("#hours tr").forEach((tr) => tr.classList.toggle("today", tr.dataset.days.split(",").includes(String(today))));
+
+      observeRise();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Damas da Praça</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a painted praça table (board in its frame) on the left; the scorekeeper's column - name, turn, settings, súmula - on the right. Stacks on phones. */
+:root {
+  --paper: #E6EAE2;
+  --panel: #D9DFD4;
+  --ink: #16221C;
+  --ink-soft: #4C5A52;
+  --line: #BCC6B8;
+  --brand: #2E5D48;
+  --felt: #2E5D48;
+  --felt-lit: #3E735A;
+  --frame: #1F4335;
+  --frame-hi: rgba(255, 255, 255, .08);
+  --frame-ink: #BFD5C7;
+  --board-edge: rgba(0, 0, 0, .3);
+  --stone: #D2D5C7;
+  --accent: #E8A81E;
+  --accent-glow: rgba(232, 168, 30, .3);
+  --accent-ink: #7E5300;
+  --danger: #D2462F;
+  --on-felt: #F3F6F0;
+  --shadow: rgba(8, 24, 16, .32);
+  --chip-ring: rgba(0, 0, 0, .14);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --crown-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 18h18l1-11-5.5 4L12 4 7.5 11 2 7z'/%3E%3C/svg%3E");
+
+  /* the pieces look the same in both themes: ivory and ebony */
+  --w0: #FFFEF8; --w1: #F3EFE4; --w2: #DCD4BF; --w3: #A89D83; --w4: #7E745D;
+  --w-rim: rgba(110, 95, 60, .22); --w-gloss: rgba(255, 255, 255, .6); --crown-w: #A36F0B;
+  --b0: #5A534E; --b1: #2E2A28; --b2: #1A1817; --b3: #0D0C0B; --b4: #3A3532;
+  --b-rim: rgba(255, 255, 255, .08); --b-gloss: rgba(255, 255, 255, .14); --crown-b: #EDB23A;
+
+  --f-display: "Alfa Slab One", Rockwell, "Roboto Slab", Georgia, serif;
+  --f-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0F1612; --panel: #17221C; --ink: #E2E8E1; --ink-soft: #97A69D; --line: #2A3931;
+    --brand: #7DBB98; --felt: #2B5843; --felt-lit: #3A6D55; --frame: #1A3328; --frame-hi: rgba(255, 255, 255, .06);
+    --frame-ink: #8FB09D; --board-edge: rgba(0, 0, 0, .45); --stone: #B4B8AA;
+    --accent: #F0B33C; --accent-glow: rgba(240, 179, 60, .3); --accent-ink: #F0B33C; --danger: #F0644C;
+    --on-felt: #F3F6F0; --shadow: rgba(0, 0, 0, .55); --chip-ring: rgba(255, 255, 255, .2);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0F1612; --panel: #17221C; --ink: #E2E8E1; --ink-soft: #97A69D; --line: #2A3931;
+  --brand: #7DBB98; --felt: #2B5843; --felt-lit: #3A6D55; --frame: #1A3328; --frame-hi: rgba(255, 255, 255, .06);
+  --frame-ink: #8FB09D; --board-edge: rgba(0, 0, 0, .45); --stone: #B4B8AA;
+  --accent: #F0B33C; --accent-glow: rgba(240, 179, 60, .3); --accent-ink: #F0B33C; --danger: #F0644C;
+  --on-felt: #F3F6F0; --shadow: rgba(0, 0, 0, .55); --chip-ring: rgba(255, 255, 255, .2);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { background: var(--paper); }
+body { background: var(--paper); color: var(--ink); font: 400 15px/1.5 var(--f-body); -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.app {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-block: clamp(16px, 3vw, 36px) 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  grid-template-columns: minmax(0, 700px) minmax(280px, 340px);
+  grid-template-areas: "board head" "board turn" "board panel";
+  grid-template-rows: auto auto 1fr;
+  column-gap: clamp(24px, 3.5vw, 48px);
+  row-gap: 18px;
+  justify-content: center;
+  align-items: start;
+}
+
+/* ---------- masthead ---------- */
+.head { grid-area: head; display: grid; gap: 10px; }
+.kicker { margin: 0; font: 600 .7rem/1.3 var(--f-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+h1 { margin: 0; font: 400 clamp(2.3rem, 4.2vw, 3.3rem)/.92 var(--f-display); color: var(--ink); text-wrap: balance; }
+h1 span { display: block; color: var(--brand); }
+
+/* ---------- turn card ---------- */
+.turn { grid-area: turn; display: grid; gap: 4px; padding: 14px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.turn-line { display: flex; align-items: center; gap: 10px; font: 700 1.2rem/1.25 var(--f-body); }
+.turn p { margin: 0; min-height: 3em; color: var(--ink-soft); }
+.turn.thinking .chip { animation: bob .8s ease-in-out infinite alternate; }
+@keyframes bob { to { transform: translateY(-4px); } }
+
+.chip { width: 20px; height: 20px; flex: none; border-radius: 50%; box-shadow: 0 0 0 1px var(--chip-ring), 0 2px 0 var(--chip-edge), 0 3px 6px var(--shadow); }
+.chip.w { --chip-edge: var(--w3); background: radial-gradient(circle at 36% 30%, var(--w0), var(--w1) 50%, var(--w2)); }
+.chip.b { --chip-edge: var(--b3); background: radial-gradient(circle at 36% 30%, var(--b0), var(--b1) 50%, var(--b2)); }
+
+/* ---------- the table ---------- */
+.table-wrap { grid-area: board; min-width: 0; }
+.table {
+  position: relative;
+  width: min(100%, 700px, max(320px, calc(100vh - 72px)));
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  grid-template-rows: auto 22px;
+  padding: 14px 16px 2px 4px;
+  background: var(--frame);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 var(--frame-hi), 0 28px 50px -28px var(--shadow);
+}
+.table::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--grain); opacity: .35; mix-blend-mode: multiply; pointer-events: none; }
+.ranks { grid-column: 1; grid-row: 1; display: grid; grid-template-rows: repeat(8, 1fr); }
+.files { grid-column: 2; grid-row: 2; display: grid; grid-template-columns: repeat(8, 1fr); }
+.ranks span, .files span { display: grid; place-items: center; font: 600 11px/1 var(--f-mono); color: var(--frame-ink); }
+
+.board {
+  grid-column: 2; grid-row: 1;
+  position: relative;
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  container-type: inline-size;
+  box-shadow: 0 0 0 3px var(--board-edge);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.board::before { content: ""; position: absolute; inset: 0; z-index: 1; background: var(--grain); opacity: .22; mix-blend-mode: multiply; pointer-events: none; }
+
+.sq { position: relative; display: block; width: 100%; height: 100%; min-width: 0; margin: 0; padding: 0; border: 0; border-radius: 0; background: var(--stone); appearance: none; -webkit-appearance: none; }
+.sq.dark { background: var(--felt); cursor: default; }
+.sq.can, .sq.dest, .sq.step { cursor: pointer; }
+.sq.last { background: var(--felt-lit); }
+.sq.trace { background: color-mix(in srgb, var(--felt) 70%, var(--accent)); }
+.sq.dest::after, .sq.step::after { content: ""; position: absolute; border-radius: 50%; }
+.sq.dest::after { inset: 38%; background: var(--accent); box-shadow: 0 0 0 .8cqw var(--accent-glow); transition: inset .12s ease; }
+.sq.dest:hover::after { inset: 34%; }
+.sq.step::after { inset: 39%; border: .45cqw solid var(--accent); }
+.sq:focus { outline: none; }
+.sq:focus-visible { outline: .6cqw solid var(--accent); outline-offset: -.6cqw; }
+
+.trail { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.trail polyline { fill: none; stroke: var(--accent); stroke-width: .07; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: .16 .12; }
+.trail circle { fill: var(--accent); }
+.trail.faint polyline { stroke: var(--on-felt); stroke-width: .05; stroke-dasharray: none; opacity: .4; }
+.trail.faint circle { fill: var(--on-felt); opacity: .4; }
+
+/* ---------- pieces ---------- */
+.pieces { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.piece { position: absolute; left: 0; top: 0; width: 12.5%; height: 12.5%; transition: transform .2s cubic-bezier(.3, .7, .3, 1); }
+.piece.moving { z-index: 2; }
+.piece.w { --hi: var(--w0); --face: var(--w1); --face-dk: var(--w2); --edge: var(--w3); --seam: var(--w4); --rim: var(--w-rim); --gloss: var(--w-gloss); --crown: var(--crown-w); }
+.piece.b { --hi: var(--b0); --face: var(--b1); --face-dk: var(--b2); --edge: var(--b3); --seam: var(--b4); --rim: var(--b-rim); --gloss: var(--b-gloss); --crown: var(--crown-b); }
+.disk {
+  position: absolute; inset: 12%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle closest-side, transparent 0 46%, var(--rim) 47% 52%, transparent 53% 74%, var(--rim) 75% 80%, transparent 81%),
+    radial-gradient(circle at 36% 30%, var(--hi), var(--face) 48%, var(--face-dk) 100%);
+  box-shadow: inset 0 .25cqw .2cqw var(--gloss), 0 .55cqw 0 var(--edge), 0 1.1cqw 1.4cqw var(--shadow);
+  transition: transform .16s ease, opacity .25s ease, filter .2s ease;
+}
+.piece.hov .disk { transform: translateY(-.5cqw); }
+.piece.selected .disk { transform: translateY(-.9cqw) scale(1.04); outline: .5cqw solid var(--accent); outline-offset: .35cqw; }
+/* a dama is two stacked pieces, as on a real table */
+.piece.king .disk {
+  transform: translateY(-.7cqw);
+  box-shadow: inset 0 .25cqw .2cqw var(--gloss), 0 .55cqw 0 var(--edge), 0 .8cqw 0 var(--seam), 0 1.35cqw 0 var(--edge), 0 1.9cqw 1.6cqw var(--shadow);
+}
+.piece.king .disk::after { content: ""; position: absolute; inset: 27%; background: var(--crown); -webkit-mask: var(--crown-img) center / contain no-repeat; mask: var(--crown-img) center / contain no-repeat; }
+.piece.king.hov .disk { transform: translateY(-1.2cqw); }
+.piece.king.selected .disk { transform: translateY(-1.6cqw) scale(1.04); }
+.piece.crowned .disk { animation: crown .5s cubic-bezier(.2, .9, .3, 1.3); }
+@keyframes crown { from { transform: translateY(-3.5cqw) scale(1.15); } }
+.piece.must::before { content: ""; position: absolute; inset: 4%; border-radius: 50%; border: .5cqw solid var(--accent); animation: must 1.4s ease-in-out infinite; }
+@keyframes must { 0%, 100% { opacity: 1; } 50% { opacity: .2; } }
+.piece.doomed .disk { filter: saturate(.3) brightness(.78); }
+.piece.doomed::after { content: ""; position: absolute; inset: 7%; border-radius: 50%; border: .5cqw dashed var(--danger); }
+.piece.taken .disk { opacity: 0; transform: scale(.5); }
+
+/* ---------- game over ---------- */
+.result { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; padding: 16px; background: color-mix(in srgb, var(--paper) 50%, transparent); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+.result-card { display: grid; gap: 8px; width: min(100%, 330px); padding: 22px 24px; background: var(--paper); color: var(--ink); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 24px 48px -16px var(--shadow); }
+.result-card h2 { margin: 0; font: 400 2rem/1.05 var(--f-display); text-wrap: balance; }
+.result-card p { margin: 0; color: var(--ink-soft); }
+.result-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+/* ---------- panel ---------- */
+.panel { grid-area: panel; display: grid; gap: 22px; min-width: 0; }
+.label { display: block; margin: 0 0 8px; font: 600 .7rem/1.2 var(--f-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+
+.sides { display: grid; }
+.side { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.side:first-child { border-top: 1px solid var(--line); }
+.side-name { font-weight: 600; }
+.side-name em { margin-left: 6px; font-style: normal; font-weight: 500; font-size: .8rem; color: var(--ink-soft); }
+.side.on .side-name { color: var(--brand); }
+.count { font: 500 .85rem/1 var(--f-mono); font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+
+.settings { display: grid; gap: 14px; }
+.seg { display: flex; gap: 2px; padding: 3px; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; }
+.seg button { flex: 1 1 0; min-width: 0; padding: 9px 6px; border: 0; border-radius: 6px; background: transparent; color: var(--ink-soft); font: 600 .85rem/1.1 var(--f-body); cursor: pointer; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.hint { margin: 0; font-size: .85rem; color: var(--accent-ink); }
+
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; border: 1px solid var(--line); border-radius: 9px; background: transparent; color: var(--ink); font: 600 .9rem/1 var(--f-body); cursor: pointer; transition: background-color .12s, box-shadow .2s; }
+.btn:hover { background: var(--panel); }
+.btn.primary { flex: 1 1 auto; background: var(--felt); border-color: var(--felt); color: var(--on-felt); }
+.btn.primary:hover { background: var(--felt-lit); }
+.btn.nudge { box-shadow: 0 0 0 3px var(--accent-glow), 0 0 0 1px var(--accent); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn:disabled:hover { background: transparent; }
+.btn.icon { width: 42px; padding: 10px 0; }
+#btnSound[aria-pressed="true"] .off, #btnSound[aria-pressed="false"] .on { display: none; }
+.btn:focus-visible, .seg button:focus-visible, .rules summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.sheet ol { list-style: none; margin: 0; padding: 0; max-height: 15rem; overflow-y: auto; border-top: 1px solid var(--line); font: 500 .85rem/1.9 var(--f-mono); font-variant-numeric: tabular-nums; }
+.sheet li { display: grid; grid-template-columns: 2.8em minmax(0, 1fr) minmax(0, 1fr); gap: 8px; border-bottom: 1px solid var(--line); }
+.sheet li.empty { display: block; padding: 6px 0; font: 400 .9rem/1.5 var(--f-body); color: var(--ink-soft); }
+.sheet .n { color: var(--ink-soft); }
+.sheet .mv { overflow-wrap: anywhere; }
+.sheet .cur { color: var(--accent-ink); font-weight: 600; }
+
+.rules summary { cursor: pointer; font-weight: 600; }
+.rules ul { display: grid; gap: 6px; max-width: 62ch; margin: 10px 0 0; padding-left: 1.1em; color: var(--ink-soft); }
+.rules p { margin: 10px 0 0; color: var(--ink-soft); max-width: 62ch; }
+
+@media (max-width: 900px) {
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "turn" "board" "panel"; grid-template-rows: auto; row-gap: 16px; }
+  .table { width: min(100%, 640px); }
+  .panel { width: 100%; max-width: 640px; margin-inline: auto; }
+  .turn, .head { width: 100%; max-width: 640px; margin-inline: auto; }
+}
+@media (max-width: 420px) {
+  .table { padding: 8px 8px 0 0; border-radius: 12px; grid-template-columns: 18px minmax(0, 1fr); grid-template-rows: auto 18px; }
+  .ranks span, .files span { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .piece, .disk, .sq.dest::after { transition: none !important; }
+  .piece.must::before, .piece.crowned .disk, .turn.thinking .chip { animation: none !important; }
+}
+</style>
+<link rel="stylesheet" href="../tema-portfolio.css">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+</head>
+<body class="tema-damas">
+
+<div class="app">
+  <header class="head">
+    <p class="kicker">Regras brasileiras · tabuleiro 8×8</p>
+    <h1>Damas <span>da Praça</span></h1>
+  </header>
+
+  <section class="turn" id="turn" aria-live="polite">
+    <div class="turn-line"><span class="chip w" id="turnChip"></span><strong id="turnTitle">Sua vez</strong></div>
+    <p id="turnDetail">Escolha uma peça para mover.</p>
+  </section>
+
+  <section class="table-wrap" aria-label="Tabuleiro">
+    <p class="sr" id="boardHelp">Use Tab para entrar no tabuleiro, as setas para andar pelas casas e Enter para escolher a peça e o destino.</p>
+    <div class="table">
+      <div class="ranks" id="ranks" aria-hidden="true"></div>
+      <div class="board" id="board" aria-describedby="boardHelp">
+        <svg class="trail" id="trail" viewBox="0 0 8 8" aria-hidden="true"><polyline id="trailLine" points=""></polyline><circle id="trailEnd" cx="0" cy="0" r="0"></circle></svg>
+        <div class="pieces" id="pieces" aria-hidden="true"></div>
+        <div class="result" id="result" hidden>
+          <div class="result-card" role="dialog" aria-labelledby="resultTitle">
+            <p class="kicker">Fim de partida</p>
+            <h2 id="resultTitle">Você venceu!</h2>
+            <p id="resultReason"></p>
+            <div class="result-actions">
+              <button class="btn primary" type="button" id="btnAgain">Jogar de novo</button>
+              <button class="btn" type="button" id="btnPeek">Ver o tabuleiro</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="files" id="files" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <aside class="panel">
+    <section class="sides" aria-label="Peças em jogo">
+      <div class="side" id="side-w"><span class="chip w"></span><span class="side-name">Brancas<em id="tag-w"></em></span><span class="count" id="count-w"></span></div>
+      <div class="side" id="side-b"><span class="chip b"></span><span class="side-name">Pretas<em id="tag-b"></em></span><span class="count" id="count-b"></span></div>
+    </section>
+
+    <section class="settings">
+      <div class="field">
+        <span class="label" id="lblMode">Adversário</span>
+        <div class="seg" role="group" aria-labelledby="lblMode" id="segMode">
+          <button type="button" id="modeAi" data-v="ai">Computador</button>
+          <button type="button" id="modePvp" data-v="pvp">Outra pessoa</button>
+        </div>
+      </div>
+      <div class="field" id="fieldColor">
+        <span class="label" id="lblColor">Você joga com</span>
+        <div class="seg" role="group" aria-labelledby="lblColor" id="segColor">
+          <button type="button" id="colorW" data-v="1">Brancas</button>
+          <button type="button" id="colorB" data-v="-1">Pretas</button>
+        </div>
+      </div>
+      <div class="field" id="fieldLevel">
+        <span class="label" id="lblLevel">Nível</span>
+        <div class="seg" role="group" aria-labelledby="lblLevel" id="segLevel">
+          <button type="button" id="levelEasy" data-v="facil">Fácil</button>
+          <button type="button" id="levelMid" data-v="medio">Médio</button>
+          <button type="button" id="levelHard" data-v="dificil">Difícil</button>
+        </div>
+      </div>
+      <p class="hint" id="hint" hidden>A troca vale a partir da próxima partida.</p>
+    </section>
+
+    <div class="actions">
+      <button class="btn primary" type="button" id="btnNew">Nova partida</button>
+      <button class="btn" type="button" id="btnUndo">Desfazer</button>
+      <button class="btn icon" type="button" id="btnFlip" title="Girar o tabuleiro" aria-label="Girar o tabuleiro">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/></svg>
+      </button>
+      <button class="btn icon" type="button" id="btnSound" title="Som ligado" aria-label="Som" aria-pressed="true">
+        <svg class="on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        <svg class="off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6"/><path d="m21 9-5 6"/></svg>
+      </button>
+    </div>
+
+    <section class="sheet">
+      <h2 class="label">Súmula</h2>
+      <ol id="log"></ol>
+    </section>
+
+    <details class="rules">
+      <summary>Regras da partida</summary>
+      <ul>
+        <li>As brancas começam. Cada lado tem 12 pedras nas casas escuras.</li>
+        <li>A pedra anda uma casa na diagonal, sempre para a frente.</li>
+        <li>Capturar é obrigatório, para a frente ou para trás, e vale encadear várias capturas no mesmo lance.</li>
+        <li>Lei da maioria: entre as capturas possíveis, é obrigatório fazer a que toma mais peças.</li>
+        <li>As peças capturadas só saem do tabuleiro no fim do lance e não podem ser puladas duas vezes.</li>
+        <li>A pedra que termina o lance na última fileira vira dama. A dama anda e captura a qualquer distância na diagonal.</li>
+        <li>Perde quem fica sem peças ou sem lances. Vinte lances seguidos de cada lado só com damas, sem captura, empatam a partida.</li>
+      </ul>
+      <p>Clique numa peça e depois na casa de destino. Quando dois caminhos de captura chegam à mesma casa, clique nas casas do caminho, uma de cada vez.</p>
+    </details>
+  </aside>
+</div>
+
+<script>
+// ---------- engine: pure rules + search, shared by the page and the worker ----------
+function engineModule() {
+  // board: Int8Array(64), index = row * 8 + col, row 0 at the top (rank 8).
+  // 1 white man, 2 white king, -1 black man, -2 black king. White plays upward.
+  const DR = [-1, -1, 1, 1], DC = [-1, 1, -1, 1];
+  const RAYS = [], DARK = [];
+  for (let sq = 0; sq < 64; sq++) {
+    const r = sq >> 3, c = sq & 7;
+    if ((r + c) & 1) DARK.push(sq);
+    const rays = [];
+    for (let d = 0; d < 4; d++) {
+      const ray = [];
+      for (let rr = r + DR[d], cc = c + DC[d]; rr >= 0 && rr < 8 && cc >= 0 && cc < 8; rr += DR[d], cc += DC[d]) ray.push(rr * 8 + cc);
+      rays.push(ray);
+    }
+    RAYS.push(rays);
+  }
+
+  function initialBoard() {
+    const b = new Int8Array(64);
+    for (const sq of DARK) {
+      const r = sq >> 3;
+      if (r < 3) b[sq] = -1;
+      else if (r > 4) b[sq] = 1;
+    }
+    return b;
+  }
+
+  function makeMove(from, path, captured, piece) {
+    const to = path[path.length - 1], r = to >> 3;
+    return { from, to, path, captured, promote: (piece === 1 && r === 0) || (piece === -1 && r === 7) };
+  }
+
+  // Every capture sequence for the piece on `from`. Captured pieces stay on the board
+  // until the move ends: they block the way and cannot be jumped twice.
+  function capturesFrom(b, from, out) {
+    const piece = b[from], side = piece > 0 ? 1 : -1, king = piece === 2 || piece === -2;
+    const path = [], taken = [];
+    b[from] = 0;
+    const walk = sq => {
+      let more = false;
+      for (let d = 0; d < 4; d++) {
+        const ray = RAYS[sq][d], n = ray.length;
+        if (king) {
+          let i = 0;
+          while (i < n && b[ray[i]] === 0) i++;
+          if (i >= n - 1) continue;
+          const t = ray[i];
+          if (b[t] * side > 0 || b[ray[i + 1]] !== 0 || taken.includes(t)) continue;
+          taken.push(t);
+          for (let j = i + 1; j < n && b[ray[j]] === 0; j++) {
+            more = true;
+            path.push(ray[j]);
+            walk(ray[j]);
+            path.pop();
+          }
+          taken.pop();
+        } else if (n >= 2) {
+          const t = ray[0], land = ray[1];
+          if (b[t] * side < 0 && b[land] === 0 && !taken.includes(t)) {
+            more = true;
+            taken.push(t); path.push(land);
+            walk(land);
+            path.pop(); taken.pop();
+          }
+        }
+      }
+      if (!more && taken.length) out.push(makeMove(from, path.slice(), taken.slice(), piece));
+    };
+    walk(from);
+    b[from] = piece;
+  }
+
+  function legalMoves(b, side) {
+    const caps = [];
+    for (const sq of DARK) if (b[sq] * side > 0) capturesFrom(b, sq, caps);
+    if (caps.length) {
+      // lei da maioria: only the sequences that take the most pieces
+      let max = 0;
+      for (const m of caps) if (m.captured.length > max) max = m.captured.length;
+      return caps.filter(m => m.captured.length === max);
+    }
+    const moves = [];
+    for (const sq of DARK) {
+      const p = b[sq];
+      if (p * side <= 0) continue;
+      if (p === 1 || p === -1) {
+        for (let d = p === 1 ? 0 : 2, e = d + 2; d < e; d++) {
+          const ray = RAYS[sq][d];
+          if (ray.length && b[ray[0]] === 0) moves.push(makeMove(sq, [ray[0]], [], p));
+        }
+      } else {
+        for (let d = 0; d < 4; d++) {
+          for (const t of RAYS[sq][d]) {
+            if (b[t] !== 0) break;
+            moves.push(makeMove(sq, [t], [], p));
+          }
+        }
+      }
+    }
+    return moves;
+  }
+
+  function apply(b, m) {
+    const piece = b[m.from], prev = m.captured.map(s => b[s]);
+    b[m.from] = 0;
+    for (const s of m.captured) b[s] = 0;
+    b[m.to] = m.promote ? piece * 2 : piece;
+    return { piece, prev };
+  }
+
+  function undo(b, m, u) {
+    b[m.to] = 0;
+    m.captured.forEach((s, i) => { b[s] = u.prev[i]; });
+    b[m.from] = u.piece;
+  }
+
+  const ADV = [0, 3, 6, 10, 15, 22, 30, 0];
+  const CENTER = new Int8Array(64);
+  for (let sq = 0; sq < 64; sq++) {
+    const r = sq >> 3, c = sq & 7;
+    if (r >= 3 && r <= 4 && c >= 2 && c <= 5) CENTER[sq] = 8;
+    else if (r >= 2 && r <= 5 && c >= 1 && c <= 6) CENTER[sq] = 3;
+  }
+
+  // Score from white's point of view.
+  function evaluate(b) {
+    let s = 0, wm = 0, bm = 0, wk = 0, bk = 0;
+    for (const sq of DARK) {
+      const p = b[sq];
+      if (!p) continue;
+      const r = sq >> 3, c = sq & 7;
+      if (p === 1) { wm++; s += 100 + ADV[7 - r] + CENTER[sq]; }
+      else if (p === -1) { bm++; s -= 100 + ADV[r] + CENTER[sq]; }
+      else if (p === 2) { wk++; s += 320 + (r + c === 7 ? 15 : 0); }
+      else { bk++; s -= 320 + (r + c === 7 ? 15 : 0); }
+    }
+    // men guarding the home row slow down enemy promotions (c1, e1 / d8, f8)
+    if (b[58] === 1) s += 8;
+    if (b[60] === 1) s += 8;
+    if (b[3] === -1) s -= 8;
+    if (b[5] === -1) s -= 8;
+    // when ahead, trading down is good
+    const total = wm + bm + wk + bk;
+    s += ((wm + 3 * wk) - (bm + 3 * bk)) * (24 - total) * 1.5;
+    return s;
+  }
+
+  // Iterative-deepening negamax with alpha-beta. Forced captures are searched past the horizon.
+  // opts: { maxDepth, timeMs, margin } - margin > 0 picks at random among moves that close to the best.
+  function search(b, side, opts) {
+    const clock = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    const t0 = clock(), MATE = 1e5;
+    let nodes = 0, stop = false;
+    const root = legalMoves(b, side);
+    if (root.length < 2) return root[0] || null;
+
+    const neg = (depth, alpha, beta, s, ply) => {
+      if ((++nodes & 1023) === 0 && clock() - t0 > opts.timeMs) stop = true;
+      if (stop) return 0;
+      const moves = legalMoves(b, s);
+      if (!moves.length) return ply - MATE;
+      if (ply >= 48 || (depth <= 0 && !moves[0].captured.length)) return s * evaluate(b);
+      const next = moves.length === 1 && ply < 32 ? depth : depth - 1;
+      if (moves.length > 1) moves.sort((x, y) => y.promote - x.promote);
+      let best = -Infinity;
+      for (const m of moves) {
+        const u = apply(b, m);
+        const v = -neg(next, -beta, -alpha, -s, ply + 1);
+        undo(b, m, u);
+        if (stop) return 0;
+        if (v > best) {
+          best = v;
+          if (v > alpha) { alpha = v; if (alpha >= beta) break; }
+        }
+      }
+      return best;
+    };
+
+    let ranked = null;
+    for (let depth = 1; depth <= opts.maxDepth && !stop; depth++) {
+      const scored = [];
+      let alpha = -Infinity;
+      for (const m of root) {
+        const u = apply(b, m);
+        const v = -neg(depth - 1, -Infinity, opts.margin - alpha, -side, 1);
+        undo(b, m, u);
+        if (stop) break;
+        scored.push([m, v]);
+        if (v > alpha) alpha = v;
+      }
+      if (stop) break;
+      scored.sort((x, y) => y[1] - x[1]);
+      ranked = scored;
+      root.splice(0, root.length, ...scored.map(x => x[0]));
+      if (Math.abs(scored[0][1]) > MATE - 500) break;
+    }
+    if (!ranked) return root[0];
+    const top = ranked[0][1];
+    const pool = ranked.filter(x => x[1] >= top - opts.margin);
+    return pool[Math.floor(Math.random() * pool.length)][0];
+  }
+
+  return { DARK, initialBoard, legalMoves, apply, undo, evaluate, search };
+}
+
+// ---------- page ----------
+const E = engineModule();
+const FILES = 'abcdefgh';
+const LEVELS = {
+  facil: { maxDepth: 1, timeMs: 300, margin: 70 },
+  medio: { maxDepth: 4, timeMs: 700, margin: 15 },
+  dificil: { maxDepth: 24, timeMs: 1500, margin: 0 },
+};
+const STORE = 'damas-da-praca:v1';
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const PIECE_NAMES = { 1: 'pedra branca', 2: 'dama branca', '-1': 'pedra preta', '-2': 'dama preta' };
+
+const $ = id => document.getElementById(id);
+const boardEl = $('board'), piecesEl = $('pieces'), trailEl = $('trail'), trailLine = $('trailLine'), trailEnd = $('trailEnd');
+
+const sqName = s => FILES[s & 7] + (8 - (s >> 3));
+const notate = m => (m.captured.length ? [m.from, ...m.path].map(sqName).join('x') : sqName(m.from) + '-' + sqName(m.to));
+const sideName = s => (s === 1 ? 'brancas' : 'pretas');
+
+const settings = { mode: 'ai', human: 1, level: 'medio', sound: true };
+const game = { mode: 'ai', human: 1, board: E.initialBoard(), side: 1, moves: [], quiet: 0, legal: [], result: null };
+const ui = { selected: null, prefix: [], hover: null, flipped: false, busy: false, thinking: false, peek: false, flash: '', focusSq: 42, movable: new Set(), logLen: -1 };
+const squareEls = new Array(64);
+const pieceEls = new Map();
+
+const vis = sq => {
+  const r = sq >> 3, c = sq & 7;
+  return ui.flipped ? [7 - r, 7 - c] : [r, c];
+};
+const fromVis = (vr, vc) => (ui.flipped ? (7 - vr) * 8 + (7 - vc) : vr * 8 + vc);
+const place = (el, sq) => {
+  const [vr, vc] = vis(sq);
+  el.style.transform = `translate(${vc * 100}%, ${vr * 100}%)`;
+};
+
+function buildSquares() {
+  boardEl.querySelectorAll('.sq').forEach(n => n.remove());
+  const frag = document.createDocumentFragment();
+  for (let vr = 0; vr < 8; vr++) {
+    for (let vc = 0; vc < 8; vc++) {
+      const sq = fromVis(vr, vc), dark = ((sq >> 3) + (sq & 7)) & 1;
+      const el = document.createElement(dark ? 'button' : 'div');
+      el.className = dark ? 'sq dark' : 'sq';
+      if (dark) { el.type = 'button'; el.dataset.sq = sq; el.tabIndex = -1; }
+      squareEls[sq] = el;
+      frag.appendChild(el);
+    }
+  }
+  boardEl.prepend(frag);
+  $('ranks').innerHTML = Array.from({ length: 8 }, (_, vr) => `<span>${ui.flipped ? vr + 1 : 8 - vr}</span>`).join('');
+  $('files').innerHTML = Array.from({ length: 8 }, (_, vc) => `<span>${FILES[ui.flipped ? 7 - vc : vc]}</span>`).join('');
+}
+
+function syncPieces() {
+  piecesEl.textContent = '';
+  pieceEls.clear();
+  for (const sq of E.DARK) {
+    const p = game.board[sq];
+    if (!p) continue;
+    const el = document.createElement('div');
+    el.className = 'piece ' + (p > 0 ? 'w' : 'b') + (Math.abs(p) === 2 ? ' king' : '');
+    el.innerHTML = '<div class="disk"></div>';
+    place(el, sq);
+    piecesEl.appendChild(el);
+    pieceEls.set(sq, el);
+  }
+}
+
+// ---------- game state ----------
+function refreshLegal() {
+  game.legal = E.legalMoves(game.board, game.side);
+  game.result = null;
+  if (!game.legal.length) {
+    const loser = game.side;
+    const left = E.DARK.some(sq => game.board[sq] * loser > 0);
+    game.result = { winner: -loser, reason: left ? `As ${sideName(loser)} ficaram sem lances.` : `As ${sideName(loser)} perderam todas as peças.` };
+  } else if (game.quiet >= 40) {
+    game.result = { winner: 0, reason: 'Foram 20 lances seguidos de cada lado só com damas, sem captura.' };
+  }
+}
+
+function record(m) {
+  const piece = game.board[m.from];
+  E.apply(game.board, m);
+  game.moves.push({ from: m.from, to: m.to, path: m.path, captured: m.captured, promote: m.promote, side: game.side, text: notate(m) });
+  game.quiet = !m.captured.length && Math.abs(piece) === 2 ? game.quiet + 1 : 0;
+  game.side = -game.side;
+  refreshLegal();
+}
+
+const findMove = r => r && Array.isArray(r.path) && game.legal.find(m => m.from === r.from && m.path.length === r.path.length && m.path.every((s, i) => s === r.path[i]));
+const humanTurn = () => !game.result && !ui.busy && (game.mode === 'pvp' || game.side === game.human);
+const candidates = () => game.legal.filter(m => m.from === ui.selected && ui.prefix.every((s, i) => m.path[i] === s));
+const canUndo = () => !ui.busy && (game.mode === 'pvp' ? game.moves.length > 0 : game.moves.some(m => m.side === game.human));
+
+function newGame(mode, human, replay = [], flipped) {
+  cancelAi();
+  Object.assign(game, { mode, human, board: E.initialBoard(), side: 1, moves: [], quiet: 0, result: null });
+  refreshLegal();
+  for (const r of replay) {
+    const m = findMove(r);
+    if (!m) break;
+    record(m);
+  }
+  ui.flipped = typeof flipped === 'boolean' ? flipped : mode === 'ai' && human === -1;
+  Object.assign(ui, { selected: null, prefix: [], hover: null, busy: false, peek: false, flash: '', logLen: -1 });
+  buildSquares();
+  syncPieces();
+  autoSelect();
+  render();
+  save();
+  maybeAi();
+}
+
+function undoMove() {
+  if (!canUndo()) return;
+  const moves = game.moves.slice();
+  if (game.mode === 'pvp') moves.pop();
+  else while (moves.length) { if (moves.pop().side === game.human) break; }
+  newGame(game.mode, game.human, moves, ui.flipped);
+}
+
+function autoSelect() {
+  if (!humanTurn()) return;
+  const froms = new Set(game.legal.map(m => m.from));
+  if (froms.size === 1) ui.selected = [...froms][0];
+}
+
+async function play(m) {
+  ui.busy = true;
+  ui.selected = null; ui.prefix = []; ui.flash = '';
+  render();
+  await animate(m);
+  record(m);
+  ui.busy = false;
+  if (game.result) { ui.peek = false; playSound('end'); }
+  autoSelect();
+  render();
+  save();
+  maybeAi();
+}
+
+function animate(m) {
+  return new Promise(done => {
+    const el = pieceEls.get(m.from);
+    if (!el) { done(); return; }
+    pieceEls.delete(m.from);
+    el.classList.remove('selected', 'hov', 'must');
+    el.classList.add('moving');
+    const step = reduceMotion ? 0 : m.captured.length ? 230 : 200;
+    let i = 0;
+    const next = () => {
+      if (i < m.path.length) {
+        place(el, m.path[i++]);
+        setTimeout(() => { playSound(m.captured.length ? 'jump' : 'move'); next(); }, step);
+        return;
+      }
+      for (const s of m.captured) {
+        const c = pieceEls.get(s);
+        if (!c) continue;
+        pieceEls.delete(s);
+        c.classList.add('taken');
+        setTimeout(() => c.remove(), 320);
+      }
+      if (m.captured.length) playSound('take');
+      el.classList.remove('moving');
+      if (m.promote) el.classList.add('king', 'crowned');
+      pieceEls.set(m.to, el);
+      setTimeout(done, m.captured.length && !reduceMotion ? 180 : 0);
+    };
+    next();
+  });
+}
+
+// ---------- computer player ----------
+let worker = null, workerBusy = false, aiJob = 0;
+
+function makeWorker() {
+  try {
+    const src = `const E=(${engineModule.toString()})();onmessage=e=>{const d=e.data;const m=E.search(Int8Array.from(d.board),d.side,d.level);postMessage({id:d.id,move:m?{from:m.from,path:m.path}:null});};`;
+    worker = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+  } catch (err) {
+    worker = null;
+  }
+}
+
+function maybeAi() {
+  if (game.result || game.mode !== 'ai' || game.side === game.human) return;
+  const job = ++aiJob, t0 = performance.now();
+  const payload = { id: job, board: Array.from(game.board), side: game.side, level: LEVELS[settings.level] || LEVELS.medio };
+  ui.thinking = true;
+  renderPanel();
+  const finish = mv => {
+    if (job !== aiJob) return;
+    setTimeout(() => {
+      if (job !== aiJob) return;
+      ui.thinking = false;
+      const m = findMove(mv) || game.legal[0];
+      if (m) play(m);
+    }, Math.max(0, 450 - (performance.now() - t0)));
+  };
+  const local = () => setTimeout(() => {
+    if (job !== aiJob) return;
+    const m = E.search(Int8Array.from(payload.board), payload.side, payload.level);
+    finish(m && { from: m.from, path: m.path });
+  }, 40);
+  if (!worker) { local(); return; }
+  workerBusy = true;
+  worker.onmessage = e => { workerBusy = false; if (e.data.id === job) finish(e.data.move); };
+  worker.onerror = e => { if (e.preventDefault) e.preventDefault(); workerBusy = false; worker = null; local(); };
+  worker.postMessage(payload);
+}
+
+function cancelAi() {
+  aiJob++;
+  ui.thinking = false;
+  if (worker && workerBusy) {
+    worker.terminate();
+    workerBusy = false;
+    makeWorker();
+  }
+}
+
+// ---------- drawing ----------
+function render() {
+  const human = humanTurn();
+  const cands = ui.selected !== null ? candidates() : [];
+  const dests = new Set(cands.map(m => m.to));
+  const steps = new Set();
+  for (const m of cands) {
+    const s = m.path[ui.prefix.length];
+    if (s !== undefined && !dests.has(s)) steps.add(s);
+  }
+  const forced = game.legal.length > 0 && game.legal[0].captured.length > 0;
+  ui.movable = new Set(human ? game.legal.map(m => m.from) : []);
+  const last = game.moves[game.moves.length - 1];
+
+  for (const sq of E.DARK) {
+    const el = squareEls[sq], p = game.board[sq];
+    el.classList.toggle('dest', dests.has(sq));
+    el.classList.toggle('step', steps.has(sq));
+    el.classList.toggle('trace', ui.prefix.includes(sq));
+    el.classList.toggle('last', !!last && (sq === last.from || sq === last.to));
+    el.classList.toggle('can', ui.movable.has(sq));
+    el.tabIndex = sq === ui.focusSq ? 0 : -1;
+    let label = sqName(sq);
+    if (p) label += ', ' + PIECE_NAMES[p];
+    if (sq === ui.selected) label += ', selecionada';
+    if (dests.has(sq)) label += ', lance possível';
+    else if (steps.has(sq)) label += ', passagem da captura';
+    el.setAttribute('aria-label', label);
+  }
+  for (const [sq, el] of pieceEls) {
+    el.classList.toggle('selected', sq === ui.selected);
+    el.classList.toggle('must', human && forced && ui.selected === null && ui.movable.has(sq));
+  }
+  renderHover();
+  renderPanel();
+}
+
+function renderHover() {
+  let show = null, faint = false;
+  if (!ui.busy) {
+    const cands = ui.selected !== null ? candidates() : [];
+    if (ui.hover !== null && cands.length) {
+      const end = cands.filter(m => m.to === ui.hover);
+      const via = cands.filter(m => m.path[ui.prefix.length] === ui.hover);
+      show = end.length === 1 ? end[0] : via.length === 1 ? via[0] : null;
+    }
+    if (!show && cands.length === 1 && cands[0].captured.length) show = cands[0];
+    if (!show && ui.prefix.length) show = { from: ui.selected, path: ui.prefix, captured: [] };
+    if (!show && ui.selected === null) {
+      const last = game.moves[game.moves.length - 1];
+      if (last && last.captured.length) { show = last; faint = true; }
+    }
+  }
+  const doomed = new Set(show && !faint ? show.captured : []);
+  for (const [sq, el] of pieceEls) {
+    el.classList.toggle('doomed', doomed.has(sq));
+    el.classList.toggle('hov', !ui.busy && sq === ui.hover && sq !== ui.selected && ui.movable.has(sq));
+  }
+  trailEl.classList.toggle('faint', faint);
+  if (!show) {
+    trailLine.setAttribute('points', '');
+    trailEnd.setAttribute('r', '0');
+    return;
+  }
+  const pts = [show.from, ...show.path].map(s => { const [vr, vc] = vis(s); return [vc + 0.5, vr + 0.5]; });
+  trailLine.setAttribute('points', pts.map(p => p.join(',')).join(' '));
+  const [x, y] = pts[pts.length - 1];
+  trailEnd.setAttribute('cx', x);
+  trailEnd.setAttribute('cy', y);
+  trailEnd.setAttribute('r', '0.1');
+}
+
+function resultTitle() {
+  const w = game.result.winner;
+  if (!w) return 'Empate';
+  if (game.mode === 'ai') return w === game.human ? 'Você venceu!' : 'O computador venceu';
+  return w === 1 ? 'Brancas vencem' : 'Pretas vencem';
+}
+
+function renderPanel() {
+  const count = { 1: [0, 0], '-1': [0, 0] };
+  for (const sq of E.DARK) {
+    const p = game.board[sq];
+    if (p) count[p > 0 ? 1 : -1][Math.abs(p) - 1]++;
+  }
+  for (const s of [1, -1]) {
+    const k = s === 1 ? 'w' : 'b', [men, kings] = count[s], total = men + kings;
+    $('count-' + k).textContent = `${total} ${total === 1 ? 'peça' : 'peças'}` + (kings ? ` · ${kings} ${kings === 1 ? 'dama' : 'damas'}` : '');
+    $('tag-' + k).textContent = game.mode === 'ai' ? (s === game.human ? 'você' : 'computador') : '';
+    $('side-' + k).classList.toggle('on', !game.result && game.side === s);
+  }
+
+  let title, detail;
+  if (game.result) {
+    title = resultTitle();
+    detail = game.result.reason;
+  } else if (game.mode === 'ai' && game.side !== game.human) {
+    title = 'Vez do computador';
+    detail = 'Pensando no lance…';
+  } else {
+    const need = game.legal[0].captured.length;
+    title = game.mode === 'ai' ? 'Sua vez' : `Vez das ${sideName(game.side)}`;
+    if (ui.flash) detail = ui.flash;
+    else if (ui.prefix.length) detail = 'Continue o caminho da captura.';
+    else if (ui.selected !== null) detail = need ? `Capture ${need === 1 ? 'a peça' : `as ${need} peças`}: escolha o destino.` : 'Escolha a casa de destino.';
+    else if (need > 1) detail = `Captura obrigatória de ${need} peças, pela lei da maioria.`;
+    else if (need) detail = 'Captura obrigatória: jogue com uma das peças marcadas.';
+    else detail = 'Escolha uma peça para mover.';
+    if (game.quiet >= 20) detail += ` Empate em ${Math.ceil((40 - game.quiet) / 2)} lances sem captura.`;
+  }
+  const chipSide = game.result && game.result.winner ? game.result.winner : game.side;
+  $('turnChip').className = 'chip ' + (chipSide === 1 ? 'w' : 'b');
+  $('turnTitle').textContent = title;
+  $('turnDetail').textContent = detail;
+  $('turn').classList.toggle('thinking', ui.thinking);
+
+  $('result').hidden = !game.result || ui.peek || ui.busy;
+  if (game.result) {
+    $('resultTitle').textContent = resultTitle();
+    $('resultReason').textContent = game.result.reason;
+  }
+
+  document.querySelectorAll('#segMode button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === settings.mode));
+  document.querySelectorAll('#segColor button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.v === settings.human));
+  document.querySelectorAll('#segLevel button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === settings.level));
+  $('fieldColor').hidden = $('fieldLevel').hidden = settings.mode !== 'ai';
+  const pending = game.moves.length > 0 && !game.result && (settings.mode !== game.mode || (settings.mode === 'ai' && settings.human !== game.human));
+  $('hint').hidden = !pending;
+  $('btnNew').classList.toggle('nudge', pending);
+  $('btnUndo').disabled = !canUndo();
+  $('btnSound').setAttribute('aria-pressed', settings.sound);
+  $('btnSound').title = settings.sound ? 'Som ligado' : 'Som desligado';
+  renderLog();
+}
+
+function renderLog() {
+  if (ui.logLen === game.moves.length) return;
+  ui.logLen = game.moves.length;
+  const log = $('log');
+  if (!game.moves.length) {
+    log.innerHTML = '<li class="empty">Nenhum lance ainda. As brancas começam.</li>';
+    return;
+  }
+  const cur = game.moves.length - 1;
+  let html = '';
+  for (let i = 0; i < game.moves.length; i += 2) {
+    const a = game.moves[i], b = game.moves[i + 1];
+    html += `<li><span class="n">${i / 2 + 1}.</span><span class="mv${i === cur ? ' cur' : ''}">${a.text}</span><span class="mv${i + 1 === cur ? ' cur' : ''}">${b ? b.text : ''}</span></li>`;
+  }
+  log.innerHTML = html;
+  log.scrollTop = log.scrollHeight;
+}
+
+// ---------- input ----------
+function onSquare(sq) {
+  if (!humanTurn()) return;
+  ui.flash = '';
+  if (ui.selected !== null) {
+    const cands = candidates();
+    const end = cands.filter(m => m.to === sq);
+    if (end.length === 1) return play(end[0]);
+    const via = cands.filter(m => m.path[ui.prefix.length] === sq);
+    if (via.length === 1) return play(via[0]);
+    if (via.length > 1) { ui.prefix.push(sq); return render(); }
+    if (end.length > 1) {
+      ui.flash = 'Mais de um caminho chega a essa casa. Clique nas casas do caminho, uma de cada vez.';
+      return render();
+    }
+  }
+  if (game.board[sq] * game.side > 0) {
+    if (ui.selected === sq && !ui.prefix.length) ui.selected = null;
+    else if (ui.movable.has(sq)) { ui.selected = sq; ui.prefix = []; }
+    else {
+      ui.selected = null; ui.prefix = [];
+      ui.flash = game.legal[0].captured.length ? 'Captura obrigatória: jogue com uma das peças marcadas.' : 'Essa peça está bloqueada.';
+    }
+  } else {
+    ui.selected = null; ui.prefix = [];
+  }
+  render();
+}
+
+boardEl.addEventListener('click', e => {
+  const t = e.target.closest('.sq.dark');
+  if (t) onSquare(+t.dataset.sq);
+});
+boardEl.addEventListener('pointermove', e => {
+  const t = e.target.closest('.sq.dark');
+  const sq = t ? +t.dataset.sq : null;
+  if (sq !== ui.hover) { ui.hover = sq; renderHover(); }
+});
+boardEl.addEventListener('pointerleave', () => { ui.hover = null; renderHover(); });
+boardEl.addEventListener('focusin', e => {
+  const t = e.target.closest('.sq.dark');
+  if (!t) return;
+  ui.focusSq = +t.dataset.sq;
+  for (const sq of E.DARK) squareEls[sq].tabIndex = sq === ui.focusSq ? 0 : -1;
+  ui.hover = ui.focusSq;
+  renderHover();
+});
+boardEl.addEventListener('keydown', e => {
+  const t = e.target.closest('.sq.dark');
+  if (!t) return;
+  const [vr, vc] = vis(+t.dataset.sq);
+  let nr = vr, nc = vc;
+  if (e.key === 'ArrowLeft') nc -= 2;
+  else if (e.key === 'ArrowRight') nc += 2;
+  else if (e.key === 'ArrowUp') { nr -= 1; nc ^= 1; }
+  else if (e.key === 'ArrowDown') { nr += 1; nc ^= 1; }
+  else return;
+  e.preventDefault();
+  if (nr < 0 || nr > 7 || nc < 0 || nc > 7) return;
+  squareEls[fromVis(nr, nc)].focus();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && ui.selected !== null && humanTurn()) {
+    ui.selected = null; ui.prefix = []; ui.flash = '';
+    render();
+  }
+});
+
+function bindSeg(id, onPick) {
+  $(id).addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (b) onPick(b.dataset.v);
+  });
+}
+function settingsChanged() {
+  if (!game.moves.length || game.result) newGame(settings.mode, settings.human);
+  else { save(); renderPanel(); }
+}
+bindSeg('segMode', v => { settings.mode = v; settingsChanged(); });
+bindSeg('segColor', v => { settings.human = +v; settingsChanged(); });
+bindSeg('segLevel', v => { settings.level = v; save(); renderPanel(); });
+
+$('btnNew').addEventListener('click', () => newGame(settings.mode, settings.human));
+$('btnAgain').addEventListener('click', () => newGame(settings.mode, settings.human));
+$('btnPeek').addEventListener('click', () => { ui.peek = true; renderPanel(); });
+$('btnUndo').addEventListener('click', undoMove);
+$('btnFlip').addEventListener('click', () => {
+  if (ui.busy) return;
+  ui.flipped = !ui.flipped;
+  buildSquares();
+  syncPieces();
+  render();
+  save();
+});
+$('btnSound').addEventListener('click', () => {
+  settings.sound = !settings.sound;
+  if (settings.sound) unlockAudio();
+  save();
+  renderPanel();
+});
+
+// ---------- sound: a short wooden knock, made on the fly ----------
+let actx = null;
+function unlockAudio() {
+  if (!settings.sound) return;
+  try {
+    if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+  } catch (err) {
+    actx = null;
+  }
+}
+document.addEventListener('pointerdown', unlockAudio, { passive: true });
+document.addEventListener('keydown', unlockAudio);
+
+function playSound(kind) {
+  if (!settings.sound || !actx) return;
+  try {
+    const t = actx.currentTime;
+    if (kind === 'end') {
+      [523.25, 783.99].forEach((f, i) => {
+        const o = actx.createOscillator(), g = actx.createGain(), at = t + i * 0.14;
+        o.type = 'triangle';
+        o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, at);
+        g.gain.exponentialRampToValueAtTime(0.16, at + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, at + 0.5);
+        o.connect(g); g.connect(actx.destination);
+        o.start(at); o.stop(at + 0.55);
+      });
+      return;
+    }
+    const len = kind === 'take' ? 0.09 : 0.05;
+    const buf = actx.createBuffer(1, Math.ceil(actx.sampleRate * len), actx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length) ** 5;
+    const src = actx.createBufferSource(), bp = actx.createBiquadFilter(), g = actx.createGain();
+    src.buffer = buf;
+    bp.type = 'bandpass';
+    bp.Q.value = 4;
+    bp.frequency.value = kind === 'take' ? 700 : kind === 'jump' ? 1300 : 1700;
+    g.gain.value = kind === 'take' ? 1.4 : 0.9;
+    src.connect(bp); bp.connect(g); g.connect(actx.destination);
+    src.start(t);
+  } catch (err) { /* sound is optional */ }
+}
+
+// ---------- persistence ----------
+function snapshot() {
+  return {
+    settings: { ...settings },
+    flipped: ui.flipped,
+    game: { mode: game.mode, human: game.human, moves: game.moves.map(m => ({ from: m.from, path: m.path })) },
+  };
+}
+function save() {
+  try { localStorage.setItem(STORE, JSON.stringify(snapshot())); } catch (err) { /* storage unavailable */ }
+}
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORE)); } catch (err) { return null; }
+}
+
+function start(data) {
+  const saved = data && data.game ? data : load();
+  const s = saved && saved.settings;
+  if (s) {
+    if (s.mode === 'ai' || s.mode === 'pvp') settings.mode = s.mode;
+    if (s.human === 1 || s.human === -1) settings.human = s.human;
+    if (LEVELS[s.level]) settings.level = s.level;
+    if (typeof s.sound === 'boolean') settings.sound = s.sound;
+  }
+  const g = saved && saved.game;
+  const mode = g && (g.mode === 'ai' || g.mode === 'pvp') ? g.mode : settings.mode;
+  const human = g && (g.human === 1 || g.human === -1) ? g.human : settings.human;
+  newGame(mode, human, g && Array.isArray(g.moves) ? g.moves : [], saved ? saved.flipped : undefined);
+}
+
+makeWorker();
+start({});
+</script>
+</body>
+</html>
