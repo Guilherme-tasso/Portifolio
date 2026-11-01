@@ -383,39 +383,234 @@ h3 {
     margin-bottom: 24px;
 }
 
-.produtos {
+.cards {
     list-style: none;
     display: grid;
-    gap: 6px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap);
 }
 
-.produto {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 20px var(--gap);
-    align-items: start;
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     background: var(--fundo);
-    padding: clamp(24px, 3vw, 40px) var(--margem);
     transition: background-color .25s ease;
 }
 
-.produto:hover {
+.card:hover {
     background: var(--claro);
 }
 
-.produto h3 {
-    grid-column: 1 / 5;
+.card-imagem {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--escuro);
+}
+
+.card-imagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+    transition: transform .6s var(--ease);
+}
+
+.card:hover .card-imagem img {
+    transform: scale(1.04);
+}
+
+.card-texto {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: clamp(20px, 2vw, 28px);
+}
+
+.card h3 {
     font-size: var(--t-sub);
 }
 
-.produto > p {
-    grid-column: 5 / 10;
+.card-modelo {
+    font-weight: 700;
+    font-size: var(--t-nota);
+    margin-top: auto;
+    padding-top: 8px;
 }
 
-.produto .condicoes {
-    grid-column: 10 / -1;
+/* o botão ocupa o card inteiro: clicar em qualquer parte abre os detalhes */
+/* sem deslocamento: um transform aqui encolheria a área clicável para o tamanho do botão */
+.card-abrir:hover,
+.card-abrir:active {
+    transform: none;
+}
+
+.card-abrir::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+}
+
+.botao-escuro {
+    background: var(--tinta);
+    color: var(--claro);
+}
+
+.botao-escuro:hover,
+.card:hover .botao-escuro {
+    background: var(--acento);
+    color: var(--escuro);
+}
+
+/* janela de detalhes */
+html:has(.detalhe[open]) {
+    overflow: hidden;
+}
+
+.detalhe {
+    width: min(1240px, 100vw - var(--margem) * 2);
+    max-width: none;
+    max-height: calc(100dvh - var(--margem) * 2);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    background: var(--fundo);
+    color: var(--tinta);
+}
+
+.detalhe::backdrop {
+    background: rgba(20, 20, 20, .78);
+}
+
+.detalhe[open] {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    overflow: hidden;
+    animation: entrar-detalhe .35s var(--ease);
+}
+
+@keyframes entrar-detalhe {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+}
+
+.detalhe-fechar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 2;
+    font: inherit;
+    font-weight: 700;
+    font-size: var(--t-nota);
+    color: var(--claro);
+    background: var(--tinta);
+    border: 0;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: background-color .2s ease, color .2s ease;
+}
+
+.detalhe-fechar:hover {
+    background: var(--acento);
+    color: var(--escuro);
+}
+
+.detalhe-galeria {
+    background: var(--escuro);
+    color: var(--claro);
+    padding: clamp(16px, 2vw, 28px);
+    overflow-y: auto;
+}
+
+.detalhe-imagem {
+    width: 100%;
+}
+
+.detalhe-galeria figcaption {
+    font-size: var(--t-nota);
+    margin-top: 12px;
+    min-height: 3em;
+}
+
+.detalhe-miniaturas {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    overflow-x: auto;
+    padding: 3px;
+}
+
+.detalhe-miniaturas button {
+    flex: 0 0 auto;
+    width: clamp(84px, 9vw, 124px);
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    opacity: .55;
+    outline: 3px solid transparent;
+    outline-offset: 0;
+    transition: opacity .2s ease, outline-color .2s ease;
+}
+
+.detalhe-miniaturas button:hover {
+    opacity: 1;
+}
+
+.detalhe-miniaturas button[aria-pressed="true"] {
+    opacity: 1;
+    outline-color: var(--acento);
+}
+
+.detalhe-nota {
+    font-size: var(--t-nota);
+    color: var(--claro-2);
+    margin-top: 12px;
+}
+
+.detalhe-texto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 0;
+    overflow-y: auto;
+    padding: clamp(24px, 3vw, 40px);
+}
+
+.detalhe-texto h3 {
+    font-size: var(--t-sub);
+    margin-bottom: 16px;
+    padding-right: 64px;
+}
+
+.detalhe-texto h4 {
+    font-size: var(--t-texto);
+    font-weight: 800;
+    margin: 24px 0 8px;
+}
+
+.detalhe-texto ul {
+    padding-left: 1.1em;
     display: grid;
     gap: 6px;
+    font-size: 1rem;
+}
+
+.detalhe-texto li::marker {
+    color: var(--acento);
+}
+
+.condicoes {
+    align-self: stretch;
+    display: grid;
+    gap: 6px;
+    background: var(--fundo-2);
+    padding: 14px 16px;
+    margin: 24px 0 16px;
     font-size: var(--t-nota);
 }
 
@@ -434,9 +629,26 @@ h3 {
     text-align: right;
 }
 
-.produto .botao {
-    grid-column: 10 / -1;
+.detalhe-texto .botao {
+    align-self: stretch;
     text-align: center;
+    flex-shrink: 0;
+}
+
+/* sem JavaScript os detalhes aparecem direto na página */
+html:not(.js) .card-abrir,
+html:not(.js) .detalhe-miniaturas,
+html:not(.js) .detalhe-fechar {
+    display: none;
+}
+
+html:not(.js) .detalhe {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    position: static;
+    width: 100%;
+    max-height: none;
+    margin-top: var(--gap);
 }
 
 /* ---------- Sobre ---------- */
@@ -623,6 +835,14 @@ h3 {
         animation: none;
     }
 
+    .detalhe[open] {
+        animation: none;
+    }
+
+    .card-imagem img {
+        transition: none;
+    }
+
     .botao,
     .canais a,
     .ferramentas div,
@@ -657,18 +877,35 @@ h3 {
         max-width: 34ch;
     }
 
-    .produto h3,
-    .produto > p {
-        grid-column: 1 / -1;
+    .cards {
+        grid-template-columns: 1fr;
     }
 
-    .produto .condicoes {
-        grid-column: 1 / 7;
+    .detalhe[open] {
+        grid-template-columns: minmax(0, 1fr);
+        overflow-y: auto;
     }
 
-    .produto .botao {
-        grid-column: 8 / -1;
-        align-self: end;
+    .detalhe-fechar {
+        position: sticky;
+        grid-row: 1;
+        grid-column: 1;
+        justify-self: end;
+        height: fit-content;
+    }
+
+    .detalhe-galeria {
+        grid-row: 1;
+        grid-column: 1;
+        overflow: visible;
+    }
+
+    .detalhe-texto {
+        overflow: visible;
+    }
+
+    html:not(.js) .detalhe {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
@@ -697,8 +934,12 @@ h3 {
         grid-template-columns: 1fr;
     }
 
-    .produto .condicoes,
-    .produto .botao {
-        grid-column: 1 / -1;
+    .detalhe {
+        width: 100vw;
+        max-height: 100dvh;
+    }
+
+    .card-imagem img {
+        object-position: top center;
     }
 }

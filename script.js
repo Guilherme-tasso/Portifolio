@@ -43,6 +43,56 @@ document.querySelectorAll('[data-palco]').forEach((palco) => {
     mostrarInfo(palco.querySelector('.abas a.ativo').dataset.info);
 });
 
+// Loja: cada card abre uma janela com a galeria e os detalhes do produto
+document.querySelectorAll('[data-abre]').forEach((botao) => {
+    const janela = document.getElementById(botao.dataset.abre);
+    botao.addEventListener('click', () => {
+        janela.showModal();
+        janela.scrollTop = 0;
+        // o botão Voltar do celular fecha a janela em vez de sair do site
+        history.pushState({ detalhe: janela.id }, '');
+    });
+});
+
+document.querySelectorAll('.detalhe').forEach((janela) => {
+    const miniaturas = [...janela.querySelectorAll('[data-imagem]')];
+    const imagem = janela.querySelector('.detalhe-imagem');
+    const legenda = janela.querySelector('figcaption');
+
+    function mostrarImagem(miniatura) {
+        imagem.src = miniatura.dataset.imagem;
+        imagem.alt = miniatura.dataset.legenda;
+        legenda.textContent = miniatura.dataset.legenda;
+        miniaturas.forEach((m) => m.setAttribute('aria-pressed', m === miniatura));
+        miniatura.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+
+    miniaturas.forEach((m) => m.addEventListener('click', () => mostrarImagem(m)));
+
+    janela.addEventListener('keydown', (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        const atual = miniaturas.findIndex((m) => m.getAttribute('aria-pressed') === 'true');
+        const passo = e.key === 'ArrowRight' ? 1 : -1;
+        mostrarImagem(miniaturas[(atual + passo + miniaturas.length) % miniaturas.length]);
+    });
+
+    janela.querySelector('[data-fecha]').addEventListener('click', () => janela.close());
+
+    // clicar fora da janela também fecha
+    janela.addEventListener('click', (e) => {
+        if (e.target === janela) janela.close();
+    });
+
+    janela.addEventListener('close', () => {
+        if (history.state && history.state.detalhe === janela.id) history.back();
+    });
+});
+
+window.addEventListener('popstate', () => {
+    const aberta = document.querySelector('.detalhe[open]');
+    if (aberta) aberta.close();
+});
+
 // Entradas: cada parte de uma seção aparece em sequência quando chega na tela
 const revelar = document.querySelectorAll('.revelar');
 

@@ -164,35 +164,140 @@
             <h2 class="titulo-secao revelar">Loja</h2>
             <p class="intro-loja revelar">Alguns projetos viraram produto. Dá para comprar uma vez ou assinar por mês, e eu instalo e ajusto para o seu negócio.</p>
 
-            <ul class="produtos">
-                <li class="produto revelar">
-                    <h3>Sistema de gestão</h3>
-                    <p>Para salões, barbearias, clínicas e lojas com uma ou várias unidades: caixa (PDV), agenda por profissional, estoque, clientes com pontos de fidelidade, cupons e painel de faturamento. Roda sobre um banco de 30 tabelas.</p>
+            <ul class="cards">
+                <li class="card revelar">
+                    <div class="card-imagem"><img src="img/loja/sistema-painel.jpg" alt="" width="1280" height="800" loading="lazy"></div>
+                    <div class="card-texto">
+                        <h3>Sistema de gestão</h3>
+                        <p>Caixa, agenda, estoque e clientes de um salão, clínica ou loja em um só lugar.</p>
+                        <p class="card-modelo">Assinatura mensal</p>
+                        <button class="botao botao-escuro card-abrir" type="button" data-abre="detalhe-sistema" aria-haspopup="dialog">Ver detalhes</button>
+                    </div>
+                </li>
+                <li class="card revelar">
+                    <div class="card-imagem"><img src="img/loja/cursos-inicio.jpg" alt="" width="1280" height="800" loading="lazy"></div>
+                    <div class="card-texto">
+                        <h3>Plataforma de cursos</h3>
+                        <p>Seu próprio site para vender cursos em vídeo, com área do aluno e painel completo.</p>
+                        <p class="card-modelo">Assinatura mensal</p>
+                        <button class="botao botao-escuro card-abrir" type="button" data-abre="detalhe-cursos" aria-haspopup="dialog">Ver detalhes</button>
+                    </div>
+                </li>
+                <li class="card revelar">
+                    <div class="card-imagem"><img src="img/loja/pc-visao-geral.jpg" alt="" width="1280" height="800" loading="lazy"></div>
+                    <div class="card-texto">
+                        <h3>PC Organizer</h3>
+                        <p>Organiza, diagnostica e monitora o seu PC com Windows, com atenção especial a jogos.</p>
+                        <p class="card-modelo">Compra única</p>
+                        <button class="botao botao-escuro card-abrir" type="button" data-abre="detalhe-pc" aria-haspopup="dialog">Ver detalhes</button>
+                    </div>
+                </li>
+            </ul>
+
+            <dialog class="detalhe" id="detalhe-sistema" aria-labelledby="titulo-sistema">
+                <button class="detalhe-fechar" type="button" data-fecha>Fechar</button>
+                <div class="detalhe-galeria" data-galeria>
+                    <figure>
+                        <img class="detalhe-imagem" src="img/loja/sistema-painel.jpg" alt="Painel com faturamento, vendas dos últimos 14 dias e mais vendidos" width="1280" height="800" loading="lazy">
+                        <figcaption>Painel com faturamento, vendas dos últimos 14 dias e mais vendidos</figcaption>
+                    </figure>
+                    <div class="detalhe-miniaturas" role="group" aria-label="Escolher imagem">
+                        <button type="button" data-imagem="img/loja/sistema-painel.jpg" data-legenda="Painel com faturamento, vendas dos últimos 14 dias e mais vendidos" aria-label="Painel com faturamento, vendas dos últimos 14 dias e mais vendidos" aria-pressed="true"><img src="img/loja/sistema-painel.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                        <button type="button" data-imagem="img/loja/sistema-agenda.jpg" data-legenda="Agenda do dia, em colunas por profissional" aria-label="Agenda do dia, em colunas por profissional" aria-pressed="false"><img src="img/loja/sistema-agenda.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                        <button type="button" data-imagem="img/loja/sistema-venda.jpg" data-legenda="Nova venda, com produtos, serviços e carrinho" aria-label="Nova venda, com produtos, serviços e carrinho" aria-pressed="false"><img src="img/loja/sistema-venda.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                        <button type="button" data-imagem="img/loja/sistema-estoque.jpg" data-legenda="Estoque, com saldo, mínimo e saídas em 30 dias" aria-label="Estoque, com saldo, mínimo e saídas em 30 dias" aria-pressed="false"><img src="img/loja/sistema-estoque.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                    </div>
+                    <p class="detalhe-nota">Imagens com dados de demonstração.</p>
+                </div>
+                <div class="detalhe-texto">
+                    <h3 id="titulo-sistema">Sistema de gestão</h3>
+                    <p>Feito para salões, barbearias, clínicas e lojas, com uma ou várias unidades. O dono acompanha o faturamento no painel, a equipe vende e agenda pelo navegador, e cada pessoa só vê o que o perfil dela permite.</p>
+                    <h4>O que ele faz</h4>
+                    <ul>
+                        <li>Painel com faturamento do dia e do mês, ticket médio, mais vendidos e estoque baixo</li>
+                        <li>Caixa (PDV) com produtos, serviços, cupom e venda fiada</li>
+                        <li>Agenda por profissional que bloqueia choque de horário e gera a venda ao concluir o atendimento</li>
+                        <li>Estoque com mínimo, entradas, saídas e ajuste de inventário</li>
+                        <li>Clientes com histórico de compras e pontos de fidelidade</li>
+                        <li>Campanhas, cupons e avaliações</li>
+                        <li>Perfis de dono, gerente e funcionário</li>
+                    </ul>
                     <dl class="condicoes">
                         <div><dt>Modelo</dt><dd>Assinatura mensal</dd></div>
                         <div><dt>Valor</dt><dd>Sob consulta</dd></div>
                     </dl>
                     <a class="botao" href="https://wa.me/5554999842511?text=Ol%C3%A1!%20Tenho%20interesse%20no%20Sistema%20de%20gest%C3%A3o." target="_blank" rel="noopener">Quero assinar</a>
-                </li>
-                <li class="produto revelar">
-                    <h3>Plataforma de cursos</h3>
-                    <p>Venda cursos em vídeo no seu próprio site: vitrine, página de cada curso, checkout com cupons, área do aluno com progresso e um painel para você configurar tudo.</p>
+                </div>
+            </dialog>
+
+            <dialog class="detalhe" id="detalhe-cursos" aria-labelledby="titulo-cursos">
+                <button class="detalhe-fechar" type="button" data-fecha>Fechar</button>
+                <div class="detalhe-galeria" data-galeria>
+                    <figure>
+                        <img class="detalhe-imagem" src="img/loja/cursos-inicio.jpg" alt="Página inicial, com textos e cores personalizáveis" width="1280" height="800" loading="lazy">
+                        <figcaption>Página inicial, com textos e cores personalizáveis</figcaption>
+                    </figure>
+                    <div class="detalhe-miniaturas" role="group" aria-label="Escolher imagem">
+                        <button type="button" data-imagem="img/loja/cursos-inicio.jpg" data-legenda="Página inicial, com textos e cores personalizáveis" aria-label="Página inicial, com textos e cores personalizáveis" aria-pressed="true"><img src="img/loja/cursos-inicio.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                        <button type="button" data-imagem="img/loja/cursos-pagina.jpg" data-legenda="Página do curso, com conteúdo e progresso do aluno" aria-label="Página do curso, com conteúdo e progresso do aluno" aria-pressed="false"><img src="img/loja/cursos-pagina.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                        <button type="button" data-imagem="img/loja/cursos-painel.jpg" data-legenda="Painel do proprietário, com a lista de cursos" aria-label="Painel do proprietário, com a lista de cursos" aria-pressed="false"><img src="img/loja/cursos-painel.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                    </div>
+                    <p class="detalhe-nota">Imagens com cursos de exemplo.</p>
+                </div>
+                <div class="detalhe-texto">
+                    <h3 id="titulo-cursos">Plataforma de cursos</h3>
+                    <p>Tudo o que você precisa para vender cursos com a sua marca: vitrine, página de cada curso, área do aluno e um painel onde você muda nome, logotipo, cores e textos sem mexer em código.</p>
+                    <h4>O que ele faz</h4>
+                    <ul>
+                        <li>Catálogo com busca, filtro por categoria e aulas de prévia gratuita</li>
+                        <li>Módulos e aulas com vídeo por link (YouTube, Vimeo, Drive) ou arquivo enviado e protegido</li>
+                        <li>Área do aluno com player, lista de aulas e barra de progresso</li>
+                        <li>Cupons de desconto por percentual, curso, limite de usos e validade</li>
+                        <li>Pagamento por Pix: o aluno vê sua chave, você aprova o pedido e o acesso é liberado</li>
+                        <li>Alunos e equipe, com liberação manual de cursos e bloqueio de contas</li>
+                    </ul>
                     <dl class="condicoes">
                         <div><dt>Modelo</dt><dd>Assinatura mensal</dd></div>
                         <div><dt>Valor</dt><dd>Sob consulta</dd></div>
                     </dl>
                     <a class="botao" href="https://wa.me/5554999842511?text=Ol%C3%A1!%20Tenho%20interesse%20na%20Plataforma%20de%20cursos." target="_blank" rel="noopener">Quero assinar</a>
-                </li>
-                <li class="produto revelar">
-                    <h3>PC Organizer</h3>
-                    <p>Programa para Windows 10 e 11 que organiza, diagnostica e monitora o computador: hardware em detalhe, rede, FPS nos jogos, teste de estresse e manutenção com confirmação.</p>
+                </div>
+            </dialog>
+
+            <dialog class="detalhe" id="detalhe-pc" aria-labelledby="titulo-pc">
+                <button class="detalhe-fechar" type="button" data-fecha>Fechar</button>
+                <div class="detalhe-galeria" data-galeria>
+                    <figure>
+                        <img class="detalhe-imagem" src="img/loja/pc-visao-geral.jpg" alt="Visão geral, com alertas e estado do computador" width="1280" height="800" loading="lazy">
+                        <figcaption>Visão geral, com alertas e estado do computador</figcaption>
+                    </figure>
+                    <div class="detalhe-miniaturas" role="group" aria-label="Escolher imagem">
+                        <button type="button" data-imagem="img/loja/pc-visao-geral.jpg" data-legenda="Visão geral, com alertas e estado do computador" aria-label="Visão geral, com alertas e estado do computador" aria-pressed="true"><img src="img/loja/pc-visao-geral.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                        <button type="button" data-imagem="img/loja/pc-velocidade.jpg" data-legenda="Teste de velocidade da internet" aria-label="Teste de velocidade da internet" aria-pressed="false"><img src="img/loja/pc-velocidade.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                        <button type="button" data-imagem="img/loja/pc-vida-util.jpg" data-legenda="Vida útil das peças do computador" aria-label="Vida útil das peças do computador" aria-pressed="false"><img src="img/loja/pc-vida-util.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                        <button type="button" data-imagem="img/loja/pc-estresse.jpg" data-legenda="Teste de estresse, com as checagens de segurança" aria-label="Teste de estresse, com as checagens de segurança" aria-pressed="false"><img src="img/loja/pc-estresse.jpg" alt="" width="1280" height="800" loading="lazy"></button>
+                    </div>
+                </div>
+                <div class="detalhe-texto">
+                    <h3 id="titulo-pc">PC Organizer</h3>
+                    <p>Um programa para Windows 10 e 11 (64 bits) que mostra o que está acontecendo no computador em português claro e ajuda a resolver. Vem com instalador, e nada é alterado no PC sem a sua confirmação.</p>
+                    <h4>O que ele faz</h4>
+                    <ul>
+                        <li>Visão geral do estado do PC, com alertas e ações rápidas</li>
+                        <li>Hardware em detalhe e vida útil de cada peça, como SSD e memória</li>
+                        <li>FPS nos jogos, sessões registradas e preparo do PC para jogar</li>
+                        <li>Teste de estresse com guarda de segurança</li>
+                        <li>Rede: teste de velocidade, diagnóstico e aparelhos conectados</li>
+                        <li>Organização de arquivos, inicialização e manutenção do Windows</li>
+                        <li>Assistente de IA opcional, que pode rodar no próprio PC</li>
+                    </ul>
                     <dl class="condicoes">
                         <div><dt>Modelo</dt><dd>Compra única</dd></div>
                         <div><dt>Valor</dt><dd>Sob consulta</dd></div>
                     </dl>
                     <a class="botao" href="https://wa.me/5554999842511?text=Ol%C3%A1!%20Tenho%20interesse%20no%20PC%20Organizer." target="_blank" rel="noopener">Quero comprar</a>
-                </li>
-            </ul>
+                </div>
+            </dialog>
         </section>
 
         <!-- Sobre -->

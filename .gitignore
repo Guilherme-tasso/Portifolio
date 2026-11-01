@@ -6,6 +6,7 @@ Guilherme/
 # Imagens antigas que o site não usa mais
 img/*
 !img/perfil.jpg
+!img/loja/
 
 # Projetos que saíram da página
 projetos/mercadozap/
